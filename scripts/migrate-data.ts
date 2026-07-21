@@ -1,59 +1,68 @@
 /**
- * One-off migration: copies rows from the original Supabase `projets` table
- * (read-only, never modified) into the new Neon `projects` table, downloading
- * each project image and storing it as base64 directly in the new row.
+ * One-off migration: reads the exported `data.csv` (a dump of the original
+ * Supabase `projets` table) and inserts each row into the new Neon
+ * `projects` table, downloading each project image (still publicly
+ * reachable from the old Supabase storage bucket) and storing it as base64
+ * directly in the new row.
  *
- * Usage: npm run migrate:data
+ * Usage: npm run migrate:data -- path/to/data.csv   (defaults to ./data.csv)
  */
 import "dotenv/config";
+import { readFileSync } from "node:fs";
+import { parse } from "csv-parse/sync";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { projects } from "../src/db/schema";
 
-const SUPABASE_URL = requireEnv("SUPABASE_URL");
-const SUPABASE_ANON_KEY = requireEnv("SUPABASE_ANON_KEY");
 const DATABASE_URL = requireEnv("DATABASE_URL");
+const csvPath = process.argv[2] ?? "./data.csv";
 
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Missing required env var: ${name}. Copy .env.example to .env.local and fill it in.`);
+    throw new Error(`Missing required env var: ${name}. Copy .env.example to .env and fill it in.`);
   }
   return value;
 }
 
-interface SupabaseProjectRow {
+interface CsvRow {
   id: string;
   titre: string;
-  categorie: string | null;
-  description_courte: string | null;
-  description_detaillee: string | null;
-  statut: string | null;
-  horizon_temps: string | null;
-  tags: string[] | null;
-  motivation: string | null;
-  ressources: string | null;
+  categorie: string;
+  description_courte: string;
+  description_detaillee: string;
+  statut: string;
+  horizon_temps: string;
+  tags: string;
+  motivation: string;
+  ressources: string;
   date_creation: string;
-  est_public: boolean | null;
-  image_url: string | null;
+  est_public: string;
+  image_url: string;
 }
 
 const sql = neon(DATABASE_URL);
 const db = drizzle(sql);
 
-async function fetchSourceRows(): Promise<SupabaseProjectRow[]> {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/projets?select=*&order=date_creation.asc`, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to read source table: ${res.status} ${await res.text()}`);
+function parseTags(raw: string): string[] {
+  if (!raw.trim()) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
+}
 
-  return res.json();
+function parseTimestamp(raw: string): Date {
+  // Postgres exports timestamptz as "2025-12-11 13:15:43.47095+00" — normalize
+  // to a strict ISO-8601 string ("...T...Z") so `new Date()` parses it reliably.
+  const isoLike = raw.trim().replace(" ", "T").replace(/\+00$/, "Z");
+  const date = new Date(isoLike);
+  if (Number.isNaN(date.getTime())) {
+    throw new Error(`Unparseable date_creation value: "${raw}"`);
+  }
+  return date;
 }
 
 async function downloadImage(sourceUrl: string): Promise<{ data: string; mimeType: string }> {
@@ -69,20 +78,26 @@ async function downloadImage(sourceUrl: string): Promise<{ data: string; mimeTyp
 }
 
 async function main() {
-  console.log("Reading source rows from Supabase (read-only)...");
-  const sourceRows = await fetchSourceRows();
-  console.log(`Found ${sourceRows.length} project(s) to migrate.`);
+  console.log(`Reading ${csvPath}...`);
+  const fileContent = readFileSync(csvPath, "utf-8");
+  const rows: CsvRow[] = parse(fileContent, {
+    columns: true,
+    delimiter: ";",
+    relax_quotes: true,
+    skip_empty_lines: true,
+  });
+  console.log(`Found ${rows.length} project(s) to migrate.`);
 
   let migrated = 0;
   let imagesMigrated = 0;
 
-  for (const row of sourceRows) {
+  for (const row of rows) {
     let imageData: string | null = null;
     let imageMimeType: string | null = null;
 
-    if (row.image_url) {
+    if (row.image_url.trim()) {
       try {
-        const image = await downloadImage(row.image_url);
+        const image = await downloadImage(row.image_url.trim());
         imageData = image.data;
         imageMimeType = image.mimeType;
         imagesMigrated++;
@@ -94,29 +109,29 @@ async function main() {
     await db.insert(projects).values({
       id: row.id,
       titre: row.titre,
-      categorie: row.categorie,
-      descriptionCourte: row.description_courte,
-      descriptionDetaillee: row.description_detaillee,
-      statut: row.statut ?? "idee",
-      horizonTemps: row.horizon_temps ?? "moyen_terme",
-      tags: row.tags ?? [],
-      motivation: row.motivation,
-      ressources: row.ressources,
-      dateCreation: new Date(row.date_creation),
-      estPublic: row.est_public ?? false,
+      categorie: row.categorie || null,
+      descriptionCourte: row.description_courte || null,
+      descriptionDetaillee: row.description_detaillee || null,
+      statut: row.statut || "idee",
+      horizonTemps: row.horizon_temps || "moyen_terme",
+      tags: parseTags(row.tags),
+      motivation: row.motivation || null,
+      ressources: row.ressources || null,
+      dateCreation: parseTimestamp(row.date_creation),
+      estPublic: row.est_public.trim().toLowerCase() === "true",
       imageData,
       imageMimeType,
     });
 
     migrated++;
-    console.log(`  ✓ [${migrated}/${sourceRows.length}] ${row.titre}`);
+    console.log(`  ✓ [${migrated}/${rows.length}] ${row.titre}`);
   }
 
   console.log("\nDone.");
-  console.log(`  Rows migrated:   ${migrated} / ${sourceRows.length}`);
+  console.log(`  Rows migrated:   ${migrated} / ${rows.length}`);
   console.log(`  Images migrated: ${imagesMigrated}`);
-  console.log("\nVerify manually: compare this count and a few titles/dates against the Supabase dashboard");
-  console.log("before considering the source project safe to decommission.");
+  console.log("\nVerify manually: compare this count and a few titles/dates against data.csv");
+  console.log("before considering the migration done.");
 }
 
 main().catch((error) => {

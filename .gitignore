@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# personal data export used by scripts/migrate-data.ts — never commit real data
+/data.csv
+
 # vercel
 .vercel
 

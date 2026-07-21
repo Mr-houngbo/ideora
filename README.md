@@ -33,4 +33,4 @@ Tracker personnel d'ambitions et de projets — business et académique — depu
 - `npm run dev` / `npm run build` / `npm run start`
 - `npm test` — tests Vitest
 - `npm run db:push` / `npm run db:studio` — Drizzle
-- `npm run migrate:data` — migration ponctuelle des données depuis l'ancien projet Supabase (lecture seule sur la source)
+- `npm run migrate:data` — migration ponctuelle des données depuis `data.csv` (export de l'ancienne table `projets`) vers Neon ; télécharge aussi chaque image encore accessible publiquement
