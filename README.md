@@ -13,7 +13,7 @@ Tracker personnel d'ambitions et de projets — business et académique — depu
 
 ## Développement local
 
-1. Copier `.env.example` vers `.env.local` et renseigner les variables (voir commentaires dans le fichier).
+1. Copier `.env.example` vers `.env` (pas `.env.local` : Drizzle Kit et le script de migration ne lisent que `.env`) et renseigner les variables (voir commentaires dans le fichier).
 2. Générer le hash du mot de passe admin :
    ```bash
    npx tsx scripts/hash-password.ts "mon-mot-de-passe"

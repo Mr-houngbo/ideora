@@ -5,6 +5,7 @@
  *
  * Usage: npm run migrate:data
  */
+import "dotenv/config";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { projects } from "../src/db/schema";
