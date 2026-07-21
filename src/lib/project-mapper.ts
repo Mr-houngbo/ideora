@@ -15,6 +15,8 @@ export function toProject(row: ProjectRow): Project {
     ressources: row.ressources ?? "",
     date_creation: row.dateCreation.toISOString(),
     est_public: row.estPublic,
-    image_url: row.imageData ? `/api/images/${row.id}` : null,
+    // Embedded as a data URI so the image travels with the page's own query
+    // instead of triggering a separate database round-trip per <img> tag.
+    image_url: row.imageData ? `data:${row.imageMimeType || "application/octet-stream"};base64,${row.imageData}` : null,
   };
 }

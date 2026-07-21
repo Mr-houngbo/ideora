@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Tailwind v4 dropped the v3 `center`/`padding` container options — restore them,
+   since every page layout here relies on `.container` being centered. */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));

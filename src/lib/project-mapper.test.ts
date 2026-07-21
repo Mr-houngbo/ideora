@@ -39,7 +39,7 @@ describe("toProject", () => {
       ressources: "https://example.com",
       date_creation: "2025-06-15T10:00:00.000Z",
       est_public: true,
-      image_url: "/api/images/11111111-1111-1111-1111-111111111111",
+      image_url: "data:image/jpeg;base64,base64abc",
     });
   });
 
