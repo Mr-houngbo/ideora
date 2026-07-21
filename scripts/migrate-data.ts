@@ -1,23 +1,17 @@
 /**
  * One-off migration: copies rows from the original Supabase `projets` table
- * (read-only, never modified) into the new Neon `projects` table, and
- * re-uploads each project image to Cloudflare R2.
+ * (read-only, never modified) into the new Neon `projects` table, downloading
+ * each project image and storing it as base64 directly in the new row.
  *
  * Usage: npm run migrate:data
  */
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { projects } from "../src/db/schema";
 
 const SUPABASE_URL = requireEnv("SUPABASE_URL");
 const SUPABASE_ANON_KEY = requireEnv("SUPABASE_ANON_KEY");
 const DATABASE_URL = requireEnv("DATABASE_URL");
-const R2_ACCOUNT_ID = requireEnv("R2_ACCOUNT_ID");
-const R2_ACCESS_KEY_ID = requireEnv("R2_ACCESS_KEY_ID");
-const R2_SECRET_ACCESS_KEY = requireEnv("R2_SECRET_ACCESS_KEY");
-const R2_BUCKET_NAME = requireEnv("R2_BUCKET_NAME");
-const R2_PUBLIC_URL = requireEnv("R2_PUBLIC_URL");
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -46,15 +40,6 @@ interface SupabaseProjectRow {
 const sql = neon(DATABASE_URL);
 const db = drizzle(sql);
 
-const r2 = new S3Client({
-  region: "auto",
-  endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: R2_ACCESS_KEY_ID,
-    secretAccessKey: R2_SECRET_ACCESS_KEY,
-  },
-});
-
 async function fetchSourceRows(): Promise<SupabaseProjectRow[]> {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/projets?select=*&order=date_creation.asc`, {
     headers: {
@@ -70,27 +55,16 @@ async function fetchSourceRows(): Promise<SupabaseProjectRow[]> {
   return res.json();
 }
 
-async function reuploadImage(sourceUrl: string): Promise<string> {
+async function downloadImage(sourceUrl: string): Promise<{ data: string; mimeType: string }> {
   const res = await fetch(sourceUrl);
   if (!res.ok) {
     throw new Error(`Failed to download image ${sourceUrl}: ${res.status}`);
   }
 
-  const contentType = res.headers.get("content-type") ?? "application/octet-stream";
-  const extension = sourceUrl.split(".").pop()?.split("?")[0] ?? "bin";
-  const key = `${crypto.randomUUID()}.${extension}`;
+  const mimeType = res.headers.get("content-type") ?? "application/octet-stream";
   const buffer = Buffer.from(await res.arrayBuffer());
 
-  await r2.send(
-    new PutObjectCommand({
-      Bucket: R2_BUCKET_NAME,
-      Key: key,
-      Body: buffer,
-      ContentType: contentType,
-    })
-  );
-
-  return `${R2_PUBLIC_URL}/${key}`;
+  return { data: buffer.toString("base64"), mimeType };
 }
 
 async function main() {
@@ -102,11 +76,14 @@ async function main() {
   let imagesMigrated = 0;
 
   for (const row of sourceRows) {
-    let imageUrl: string | null = null;
+    let imageData: string | null = null;
+    let imageMimeType: string | null = null;
 
     if (row.image_url) {
       try {
-        imageUrl = await reuploadImage(row.image_url);
+        const image = await downloadImage(row.image_url);
+        imageData = image.data;
+        imageMimeType = image.mimeType;
         imagesMigrated++;
       } catch (error) {
         console.error(`  ! Failed to migrate image for "${row.titre}" (${row.id}):`, error);
@@ -126,7 +103,8 @@ async function main() {
       ressources: row.ressources,
       dateCreation: new Date(row.date_creation),
       estPublic: row.est_public ?? false,
-      imageUrl,
+      imageData,
+      imageMimeType,
     });
 
     migrated++;

@@ -50,7 +50,7 @@ const ProjectDetailView = ({ project: initialProject }: ProjectDetailViewProps) 
 
   const handleDelete = async () => {
     try {
-      await deleteProject(project.id, project.image_url);
+      await deleteProject(project.id);
       toast.success("Projet supprimé", {
         description: "Le projet a été supprimé définitivement.",
       });

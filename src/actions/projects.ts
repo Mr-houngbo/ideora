@@ -6,7 +6,6 @@ import { verifySession } from "@/lib/dal";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { toProject } from "@/lib/projects";
-import { uploadImageToR2, deleteImageFromR2 } from "@/lib/r2";
 import { projectFormSchema, type ProjectFormValues } from "@/lib/validations/project";
 import type { Project } from "@/types/project";
 
@@ -22,19 +21,27 @@ function toRow(data: ProjectFormValues) {
     motivation: data.motivation,
     ressources: data.ressources,
     estPublic: data.est_public,
-    imageUrl: data.image_url,
   };
+}
+
+async function fileToBase64(file: File): Promise<string> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  return buffer.toString("base64");
 }
 
 export async function createProject(formData: ProjectFormValues, imageFile?: File): Promise<Project> {
   await verifySession();
   const data = projectFormSchema.parse(formData);
 
-  if (imageFile && imageFile.size > 0) {
-    data.image_url = await uploadImageToR2(imageFile);
-  }
+  const imageColumns =
+    imageFile && imageFile.size > 0
+      ? { imageData: await fileToBase64(imageFile), imageMimeType: imageFile.type || "application/octet-stream" }
+      : {};
 
-  const [row] = await db.insert(projects).values(toRow(data)).returning();
+  const [row] = await db
+    .insert(projects)
+    .values({ ...toRow(data), ...imageColumns })
+    .returning();
 
   revalidatePath("/");
   revalidatePath("/education");
@@ -43,23 +50,23 @@ export async function createProject(formData: ProjectFormValues, imageFile?: Fil
   return toProject(row);
 }
 
-export async function updateProject(
-  id: string,
-  formData: ProjectFormValues,
-  imageFile?: File,
-  previousImageUrl?: string | null
-): Promise<Project> {
+export async function updateProject(id: string, formData: ProjectFormValues, imageFile?: File): Promise<Project> {
   await verifySession();
   const data = projectFormSchema.parse(formData);
 
+  let imageColumns: { imageData?: string | null; imageMimeType?: string | null } = {};
   if (imageFile && imageFile.size > 0) {
-    if (previousImageUrl) {
-      await deleteImageFromR2(previousImageUrl);
-    }
-    data.image_url = await uploadImageToR2(imageFile);
+    imageColumns = { imageData: await fileToBase64(imageFile), imageMimeType: imageFile.type || "application/octet-stream" };
+  } else if (data.image_url === null) {
+    // User explicitly removed the image in the form.
+    imageColumns = { imageData: null, imageMimeType: null };
   }
 
-  const [row] = await db.update(projects).set(toRow(data)).where(eq(projects.id, id)).returning();
+  const [row] = await db
+    .update(projects)
+    .set({ ...toRow(data), ...imageColumns })
+    .where(eq(projects.id, id))
+    .returning();
 
   revalidatePath("/");
   revalidatePath("/education");
@@ -79,12 +86,8 @@ export async function toggleProjectVisibility(id: string, estPublic: boolean): P
   return toProject(row);
 }
 
-export async function deleteProject(id: string, imageUrl?: string | null): Promise<void> {
+export async function deleteProject(id: string): Promise<void> {
   await verifySession();
-
-  if (imageUrl) {
-    await deleteImageFromR2(imageUrl);
-  }
 
   await db.delete(projects).where(eq(projects.id, id));
 

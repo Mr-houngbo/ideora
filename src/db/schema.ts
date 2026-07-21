@@ -13,7 +13,8 @@ export const projects = pgTable("projects", {
   ressources: text("ressources"),
   dateCreation: timestamp("date_creation", { withTimezone: true }).notNull().defaultNow(),
   estPublic: boolean("est_public").notNull().default(false),
-  imageUrl: text("image_url"),
+  imageData: text("image_data"), // base64-encoded image bytes, stored in Postgres — no external storage service
+  imageMimeType: text("image_mime_type"),
 });
 
 export type ProjectRow = typeof projects.$inferSelect;

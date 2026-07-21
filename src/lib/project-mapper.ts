@@ -15,6 +15,6 @@ export function toProject(row: ProjectRow): Project {
     ressources: row.ressources ?? "",
     date_creation: row.dateCreation.toISOString(),
     est_public: row.estPublic,
-    image_url: row.imageUrl,
+    image_url: row.imageData ? `/api/images/${row.id}` : null,
   };
 }

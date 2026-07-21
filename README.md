@@ -7,7 +7,7 @@ Tracker personnel d'ambitions et de projets — business et académique — depu
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
 - [Neon](https://neon.tech) (PostgreSQL) + [Drizzle ORM](https://orm.drizzle.team)
 - Session serveur signée (JWT via `jose`) + mot de passe hashé (`bcryptjs`), toutes les routes protégées via `proxy.ts`
-- [Cloudflare R2](https://developers.cloudflare.com/r2/) pour les images
+- Images stockées en base64 directement dans Neon (aucun service de stockage tiers), servies via `/api/images/[id]`
 - shadcn/ui, Tailwind CSS, Framer Motion, Zustand (filtres UI uniquement)
 - [Vitest](https://vitest.dev) pour les tests
 

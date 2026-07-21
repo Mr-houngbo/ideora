@@ -20,7 +20,7 @@ const EditProjectView = ({ project }: EditProjectViewProps) => {
     setIsLoading(true);
 
     try {
-      await updateProject(project.id, data, imageFile, project.image_url);
+      await updateProject(project.id, data, imageFile);
 
       toast.success("Projet mis à jour!", {
         description: "Les modifications ont été enregistrées.",
