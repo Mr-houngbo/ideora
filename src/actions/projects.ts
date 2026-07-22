@@ -21,6 +21,7 @@ function toRow(data: ProjectFormValues) {
     motivation: data.motivation,
     ressources: data.ressources,
     contenuRiche: data.contenu_riche || null,
+    accentTheme: data.accent_theme,
     estEspaceTravail: data.est_espace_travail,
   };
 }

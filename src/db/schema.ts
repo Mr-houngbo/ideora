@@ -16,6 +16,7 @@ export const projects = pgTable("projects", {
   imageData: text("image_data"), // base64-encoded image bytes, stored in Postgres — no external storage service
   imageMimeType: text("image_mime_type"),
   contenuRiche: text("contenu_riche"), // optional Markdown body, rendered on the project detail page
+  accentTheme: text("accent_theme"), // key into ACCENT_THEMES, styles the rich content rendering
   estEspaceTravail: boolean("est_espace_travail").notNull().default(false), // unlocks the linked workspace tool
   workspaceData: jsonb("workspace_data").$type<WorkspaceStore>(),
 });

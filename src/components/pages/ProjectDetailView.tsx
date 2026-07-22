@@ -3,9 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { ArrowLeft, Calendar, Edit2, Trash2, Target, Lightbulb, Link as LinkIcon, LayoutDashboard, BookText } from "lucide-react";
+import { ArrowLeft, Calendar, Edit2, Trash2, Target, Lightbulb, Link as LinkIcon, LayoutDashboard } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +22,9 @@ import {
 import { toast } from "sonner";
 import { deleteProject } from "@/actions/projects";
 import { STATUS_LABELS, STATUS_COLORS, HORIZON_LABELS, HORIZON_COLORS, Project } from "@/types/project";
+import { getAccentTheme } from "@/lib/accent-themes";
+import RichMarkdown from "@/components/projects/RichMarkdown";
+import { cn } from "@/lib/utils";
 
 interface ProjectDetailViewProps {
   project: Project;
@@ -31,6 +32,8 @@ interface ProjectDetailViewProps {
 
 const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
   const router = useRouter();
+  const isRich = Boolean(project.contenu_riche);
+  const theme = getAccentTheme(project.accent_theme);
 
   const handleDelete = async () => {
     try {
@@ -49,11 +52,19 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
   return (
     <Layout>
       <div className="min-h-screen">
-        <div className="relative h-64 md:h-80 lg:h-96 bg-gradient-to-br from-primary/10 to-accent/10">
+        <div
+          className="relative h-64 md:h-80 lg:h-96"
+          style={!project.image_url && isRich ? { background: `linear-gradient(135deg, ${theme.from}, ${theme.via}, ${theme.to})` } : undefined}
+        >
           {project.image_url ? (
             <img src={project.image_url} alt={project.titre} className="w-full h-full object-cover" />
+          ) : isRich ? (
+            <div className="w-full h-full flex flex-col items-center justify-center text-center px-6">
+              <p className="text-xs uppercase tracking-[0.3em] text-white/70 mb-3">{project.categorie}</p>
+              <h1 className="text-3xl md:text-5xl font-bold text-white drop-shadow-sm">{project.titre}</h1>
+            </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
               <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                 <span className="text-5xl font-bold gradient-text">{project.titre.charAt(0).toUpperCase()}</span>
               </div>
@@ -97,7 +108,7 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
           </div>
         </div>
 
-        <div className="container max-w-4xl py-8 -mt-16 relative z-10">
+        <div className={cn("container py-8 -mt-16 relative z-10", isRich ? "max-w-5xl" : "max-w-4xl")}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="p-8 mb-8">
               <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -105,7 +116,12 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
                 <Badge variant="secondary" className={HORIZON_COLORS[project.horizon_temps]}>
                   {HORIZON_LABELS[project.horizon_temps]}
                 </Badge>
-                <span className="text-sm font-medium text-primary uppercase tracking-wider">{project.categorie}</span>
+                <span
+                  className="text-sm font-medium text-primary uppercase tracking-wider"
+                  style={isRich ? { color: theme.solid } : undefined}
+                >
+                  {project.categorie}
+                </span>
               </div>
 
               <h1 className="text-3xl md:text-4xl font-bold mb-4">{project.titre}</h1>
@@ -159,16 +175,25 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
             )}
 
             {project.contenu_riche && (
-              <Card className="p-8 mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <BookText className="w-5 h-5 text-primary" />
-                  </div>
-                  <h2 className="text-xl font-semibold">Contenu détaillé</h2>
+              <div className="mb-6 overflow-hidden rounded-3xl relative">
+                <div
+                  className="absolute inset-0"
+                  style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.via}, ${theme.to})` }}
+                />
+                <div className="absolute inset-0 bg-black/10" />
+                <div className="relative z-10 px-8 py-14 md:py-20 text-center">
+                  <p className="text-xs uppercase tracking-[0.3em] text-white/70 mb-4">{project.horizon_temps && HORIZON_LABELS[project.horizon_temps]}</p>
+                  <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.titre}</h2>
+                  {project.description_courte && (
+                    <p className="text-white/90 text-base md:text-lg max-w-2xl mx-auto italic">{project.description_courte}</p>
+                  )}
                 </div>
-                <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.contenu_riche}</ReactMarkdown>
-                </div>
+              </div>
+            )}
+
+            {project.contenu_riche && (
+              <Card className="p-8 md:p-12 mb-6" style={{ borderTop: `3px solid ${theme.solid}` }}>
+                <RichMarkdown content={project.contenu_riche} theme={theme} />
               </Card>
             )}
 

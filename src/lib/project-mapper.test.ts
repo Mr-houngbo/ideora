@@ -18,6 +18,7 @@ function makeRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
     imageData: "base64abc",
     imageMimeType: "image/jpeg",
     contenuRiche: null,
+    accentTheme: null,
     estEspaceTravail: false,
     workspaceData: null,
     ...overrides,
@@ -42,6 +43,7 @@ describe("toProject", () => {
       date_creation: "2025-06-15T10:00:00.000Z",
       image_url: "data:image/jpeg;base64,base64abc",
       contenu_riche: "",
+      accent_theme: null,
       est_espace_travail: false,
       workspace_data: null,
     });

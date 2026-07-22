@@ -17,6 +17,7 @@ function makeProject(overrides: Partial<Project> = {}): Project {
     date_creation: "2025-01-01T00:00:00.000Z",
     image_url: null,
     contenu_riche: "",
+    accent_theme: null,
     est_espace_travail: false,
     workspace_data: null,
     ...overrides,

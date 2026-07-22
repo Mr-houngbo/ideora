@@ -17,6 +17,7 @@ export interface Project {
   date_creation: string;
   image_url: string | null;
   contenu_riche: string;
+  accent_theme: string | null;
   est_espace_travail: boolean;
   workspace_data: WorkspaceStore | null;
 }

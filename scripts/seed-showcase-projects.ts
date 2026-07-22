@@ -698,6 +698,7 @@ interface ShowcaseProject {
   descriptionDetaillee?: string;
   motivation?: string;
   contenuRiche: string;
+  accentTheme: string;
   tags: string[];
   estEspaceTravail?: boolean;
   imagePath?: string;
@@ -710,6 +711,7 @@ const showcaseProjects: ShowcaseProject[] = [
     descriptionCourte: "Former les géants de demain — un bootcamp tech intensif pour les enfants du Bénin.",
     motivation: "Je dois rehausser le niveau de mes frères et sœurs du village.",
     contenuRiche: dahoContent,
+    accentTheme: "orange",
     tags: ["Éducation", "IA", "Bootcamp", "Bénin"],
   },
   {
@@ -718,6 +720,7 @@ const showcaseProjects: ShowcaseProject[] = [
     descriptionCourte: "Résidences étudiantes intelligentes de nouvelle génération au Bénin — ouverture cible septembre 2029.",
     motivation: "Je ne construis pas une résidence, je construis des destins.",
     contenuRiche: houefaContent,
+    accentTheme: "emeraude",
     tags: ["Immobilier", "SuperApp", "Éducation", "Bénin"],
     imagePath: HOUEFA_IMAGE_PATH,
   },
@@ -727,6 +730,7 @@ const showcaseProjects: ShowcaseProject[] = [
     descriptionCourte: "Cercle privé d'éducation financière et d'investissement, fondé en 2025.",
     motivation: "En hommage à mon petit frère.",
     contenuRiche: perseusContent,
+    accentTheme: "or",
     tags: ["Finance", "Investissement", "Club privé"],
   },
   {
@@ -734,6 +738,7 @@ const showcaseProjects: ShowcaseProject[] = [
     categorie: "Social",
     descriptionCourte: "Je vais changer l'éducation au Bénin — manifeste et plan sur 20 ans.",
     contenuRiche: visionEducationContent,
+    accentTheme: "bleu",
     tags: ["Éducation", "Documentaire", "Livre", "Réforme"],
   },
   {
@@ -741,6 +746,7 @@ const showcaseProjects: ShowcaseProject[] = [
     categorie: "Social",
     descriptionCourte: "Observer le monde, construire le Bénin — espace de travail pour cartographier des initiatives adaptables.",
     contenuRiche: monPaysPlusContent,
+    accentTheme: "emeraude",
     tags: ["Bénin", "Veille", "Initiatives"],
     estEspaceTravail: true,
   },
@@ -767,6 +773,7 @@ async function main() {
       tags: item.tags,
       motivation: item.motivation ?? null,
       contenuRiche: item.contenuRiche,
+      accentTheme: item.accentTheme,
       estEspaceTravail: item.estEspaceTravail ?? false,
       workspaceData: item.estEspaceTravail ? emptyWorkspaceStore : null,
       imageData,

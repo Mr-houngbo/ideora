@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Image as ImageIcon, Loader2, Save, ArrowLeft, Briefcase, GraduationCap, Sparkles } from "lucide-react";
+import { X, Image as ImageIcon, Loader2, Save, ArrowLeft, Briefcase, GraduationCap, Sparkles, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +23,7 @@ import {
   isEducationCategory,
 } from "@/types/project";
 import { cn } from "@/lib/utils";
+import { ACCENT_THEME_OPTIONS } from "@/lib/accent-themes";
 
 type ProjectType = "entreprise" | "academique";
 
@@ -63,6 +64,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
     ressources: initialData?.ressources || "",
     image_url: initialData?.image_url || null,
     contenu_riche: initialData?.contenu_riche || "",
+    accent_theme: initialData?.accent_theme || null,
     est_espace_travail: initialData?.est_espace_travail || false,
   });
 
@@ -80,7 +82,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
 
   const currentCategories = projectType === "academique" ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
 
-  const handleChange = (field: keyof ProjectFormData, value: string | boolean | string[]) => {
+  const handleChange = (field: keyof ProjectFormData, value: string | boolean | string[] | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -445,6 +447,33 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
               placeholder={"## Vision\n\nDécrivez ici tout ce que vous voulez, en Markdown..."}
               className="min-h-[220px] font-mono text-sm"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="font-semibold">Thème visuel</Label>
+            <p className="text-xs text-muted-foreground">
+              Donne au contenu riche ci-dessus sa propre identité — titres, citations et tableaux reprennent cette couleur.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-1">
+              {ACCENT_THEME_OPTIONS.map((theme) => {
+                const isSelected = (formData.accent_theme ?? "violet") === theme.key;
+                return (
+                  <button
+                    key={theme.key}
+                    type="button"
+                    onClick={() => handleChange("accent_theme", theme.key === "violet" ? null : theme.key)}
+                    className={cn("relative w-10 h-10 rounded-full flex items-center justify-center transition-transform", isSelected && "scale-110")}
+                    style={{
+                      background: `linear-gradient(135deg, ${theme.from}, ${theme.via}, ${theme.to})`,
+                      boxShadow: isSelected ? `0 0 0 2px var(--background), 0 0 0 4px ${theme.solid}` : undefined,
+                    }}
+                    title={theme.label}
+                  >
+                    {isSelected && <Check className="w-4 h-4 text-white drop-shadow" />}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="flex items-center gap-3 pt-2">

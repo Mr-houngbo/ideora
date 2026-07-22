@@ -12,6 +12,7 @@ export const projectFormSchema = z.object({
   ressources: z.string().trim().default(""),
   image_url: z.string().nullable().default(null),
   contenu_riche: z.string().trim().default(""),
+  accent_theme: z.string().nullable().default(null),
   est_espace_travail: z.boolean().default(false),
 });
 
