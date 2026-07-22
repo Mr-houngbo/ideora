@@ -20,6 +20,7 @@ function makeProject(overrides: Partial<Project> = {}): Project {
     accent_theme: null,
     est_espace_travail: false,
     workspace_data: null,
+    custom_template: null,
     ...overrides,
   };
 }

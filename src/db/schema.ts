@@ -17,6 +17,7 @@ export const projects = pgTable("projects", {
   imageMimeType: text("image_mime_type"),
   contenuRiche: text("contenu_riche"), // optional Markdown body, rendered on the project detail page
   accentTheme: text("accent_theme"), // key into ACCENT_THEMES, styles the rich content rendering
+  customTemplate: text("custom_template"), // key into SHOWCASE_TEMPLATES; a hand-built React page replaces the generic detail view when set
   estEspaceTravail: boolean("est_espace_travail").notNull().default(false), // unlocks the linked workspace tool
   workspaceData: jsonb("workspace_data").$type<WorkspaceStore>(),
 });

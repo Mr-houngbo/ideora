@@ -20,9 +20,10 @@ export interface Project {
   accent_theme: string | null;
   est_espace_travail: boolean;
   workspace_data: WorkspaceStore | null;
+  custom_template: string | null;
 }
 
-export type ProjectFormData = Omit<Project, 'id' | 'date_creation' | 'workspace_data'>;
+export type ProjectFormData = Omit<Project, 'id' | 'date_creation' | 'workspace_data' | 'custom_template'>;
 
 export const STATUS_LABELS: Record<ProjectStatus, string> = {
   idee: 'Idée',

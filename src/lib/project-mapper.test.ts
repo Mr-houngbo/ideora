@@ -21,6 +21,7 @@ function makeRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
     accentTheme: null,
     estEspaceTravail: false,
     workspaceData: null,
+    customTemplate: null,
     ...overrides,
   };
 }
@@ -46,6 +47,7 @@ describe("toProject", () => {
       accent_theme: null,
       est_espace_travail: false,
       workspace_data: null,
+      custom_template: null,
     });
   });
 

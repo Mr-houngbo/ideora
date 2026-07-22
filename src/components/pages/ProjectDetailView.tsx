@@ -25,6 +25,8 @@ import { STATUS_LABELS, STATUS_COLORS, HORIZON_LABELS, HORIZON_COLORS, Project }
 import { getAccentTheme } from "@/lib/accent-themes";
 import RichMarkdown from "@/components/projects/RichMarkdown";
 import { cn } from "@/lib/utils";
+import Header from "@/components/layout/Header";
+import { SHOWCASE_TEMPLATES } from "@/components/showcase";
 
 interface ProjectDetailViewProps {
   project: Project;
@@ -34,6 +36,7 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
   const router = useRouter();
   const isRich = Boolean(project.contenu_riche);
   const theme = getAccentTheme(project.accent_theme);
+  const CustomShowcase = project.custom_template ? SHOWCASE_TEMPLATES[project.custom_template] : null;
 
   const handleDelete = async () => {
     try {
@@ -48,6 +51,49 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
       });
     }
   };
+
+  const managementControls = (
+    <AlertDialog>
+      <div className="fixed top-24 left-4 z-40">
+        <Button variant="glass" size="sm" onClick={() => router.back()}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Retour
+        </Button>
+      </div>
+      <div className="fixed top-24 right-4 z-40 flex gap-2">
+        <Link href={`/edit/${project.id}`}>
+          <Button variant="glass" size="icon-sm">
+            <Edit2 className="w-4 h-4" />
+          </Button>
+        </Link>
+        <AlertDialogTrigger asChild>
+          <Button variant="glass" size="icon-sm">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </AlertDialogTrigger>
+      </div>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Supprimer ce projet?</AlertDialogTitle>
+          <AlertDialogDescription>Cette action est irréversible. Le projet sera définitivement supprimé.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete}>Supprimer</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
+  if (CustomShowcase) {
+    return (
+      <>
+        <Header />
+        {managementControls}
+        <CustomShowcase />
+      </>
+    );
+  }
 
   return (
     <Layout>

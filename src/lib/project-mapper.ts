@@ -25,6 +25,7 @@ export function toProject(row: ProjectRow): Project {
     accent_theme: row.accentTheme ?? null,
     est_espace_travail: row.estEspaceTravail,
     workspace_data: row.workspaceData ?? null,
+    custom_template: row.customTemplate ?? null,
   };
 }
 
@@ -66,5 +67,6 @@ export function toProjectSummary(row: ProjectSummaryRow): Project {
     accent_theme: null,
     est_espace_travail: row.estEspaceTravail,
     workspace_data: null,
+    custom_template: null,
   };
 }
