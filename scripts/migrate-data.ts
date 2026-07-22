@@ -118,7 +118,6 @@ async function main() {
       motivation: row.motivation || null,
       ressources: row.ressources || null,
       dateCreation: parseTimestamp(row.date_creation),
-      estPublic: row.est_public.trim().toLowerCase() === "true",
       imageData,
       imageMimeType,
     });

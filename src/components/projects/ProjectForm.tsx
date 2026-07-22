@@ -61,8 +61,9 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
     tags: initialData?.tags || [],
     motivation: initialData?.motivation || "",
     ressources: initialData?.ressources || "",
-    est_public: initialData?.est_public || false,
     image_url: initialData?.image_url || null,
+    contenu_riche: initialData?.contenu_riche || "",
+    est_espace_travail: initialData?.est_espace_travail || false,
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -426,16 +427,36 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
             />
           </div>
 
+        </Card>
+
+        <Card className="p-6 space-y-6 card-premium">
+          <div className="space-y-2">
+            <Label htmlFor="contenu_riche" className="font-semibold">
+              Contenu riche (Markdown)
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Pour les projets qui méritent plus de profondeur : sections, listes, tableaux, citations — écrit en
+              Markdown, affiché en dessous de la description sur la fiche du projet.
+            </p>
+            <Textarea
+              id="contenu_riche"
+              value={formData.contenu_riche}
+              onChange={(e) => handleChange("contenu_riche", e.target.value)}
+              placeholder={"## Vision\n\nDécrivez ici tout ce que vous voulez, en Markdown..."}
+              className="min-h-[220px] font-mono text-sm"
+            />
+          </div>
+
           <div className="flex items-center gap-3 pt-2">
             <input
               type="checkbox"
-              id="est_public"
-              checked={formData.est_public}
-              onChange={(e) => handleChange("est_public", e.target.checked)}
+              id="est_espace_travail"
+              checked={formData.est_espace_travail}
+              onChange={(e) => handleChange("est_espace_travail", e.target.checked)}
               className="w-5 h-5 rounded-lg border-border text-primary focus:ring-primary cursor-pointer"
             />
-            <Label htmlFor="est_public" className="cursor-pointer font-medium">
-              Rendre ce projet visible dans le portfolio
+            <Label htmlFor="est_espace_travail" className="cursor-pointer font-medium">
+              Activer l&apos;espace de travail avancé (initiatives, contacts, roadmap, bibliothèque...)
             </Label>
           </div>
         </Card>

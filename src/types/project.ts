@@ -1,3 +1,5 @@
+import type { WorkspaceStore } from './workspace';
+
 export type ProjectStatus = 'idee' | 'en_cours' | 'en_pause' | 'termine' | 'abandonne';
 export type TimeHorizon = 'court_terme' | 'moyen_terme' | 'long_terme';
 
@@ -13,11 +15,13 @@ export interface Project {
   motivation: string;
   ressources: string;
   date_creation: string;
-  est_public: boolean;
   image_url: string | null;
+  contenu_riche: string;
+  est_espace_travail: boolean;
+  workspace_data: WorkspaceStore | null;
 }
 
-export type ProjectFormData = Omit<Project, 'id' | 'date_creation'>;
+export type ProjectFormData = Omit<Project, 'id' | 'date_creation' | 'workspace_data'>;
 
 export const STATUS_LABELS: Record<ProjectStatus, string> = {
   idee: 'Idée',

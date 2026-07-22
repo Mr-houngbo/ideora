@@ -10,8 +10,9 @@ export const projectFormSchema = z.object({
   tags: z.array(z.string().trim().min(1)).default([]),
   motivation: z.string().trim().default(""),
   ressources: z.string().trim().default(""),
-  est_public: z.boolean().default(false),
   image_url: z.string().nullable().default(null),
+  contenu_riche: z.string().trim().default(""),
+  est_espace_travail: z.boolean().default(false),
 });
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;

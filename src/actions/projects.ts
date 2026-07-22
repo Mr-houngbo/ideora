@@ -20,7 +20,8 @@ function toRow(data: ProjectFormValues) {
     tags: data.tags,
     motivation: data.motivation,
     ressources: data.ressources,
-    estPublic: data.est_public,
+    contenuRiche: data.contenu_riche || null,
+    estEspaceTravail: data.est_espace_travail,
   };
 }
 
@@ -45,7 +46,6 @@ export async function createProject(formData: ProjectFormValues, imageFile?: Fil
 
   revalidatePath("/");
   revalidatePath("/education");
-  revalidatePath("/portfolio");
 
   return toProject(row);
 }
@@ -70,17 +70,6 @@ export async function updateProject(id: string, formData: ProjectFormValues, ima
 
   revalidatePath("/");
   revalidatePath("/education");
-  revalidatePath("/portfolio");
-  revalidatePath(`/projet/${id}`);
-
-  return toProject(row);
-}
-
-export async function toggleProjectVisibility(id: string, estPublic: boolean): Promise<Project> {
-  await verifySession();
-  const [row] = await db.update(projects).set({ estPublic }).where(eq(projects.id, id)).returning();
-
-  revalidatePath("/portfolio");
   revalidatePath(`/projet/${id}`);
 
   return toProject(row);
@@ -93,5 +82,4 @@ export async function deleteProject(id: string): Promise<void> {
 
   revalidatePath("/");
   revalidatePath("/education");
-  revalidatePath("/portfolio");
 }

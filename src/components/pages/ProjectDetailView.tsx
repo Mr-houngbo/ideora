@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Edit2, Trash2, Eye, EyeOff, Target, Lightbulb, Link as LinkIcon } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { ArrowLeft, Calendar, Edit2, Trash2, Target, Lightbulb, Link as LinkIcon, LayoutDashboard, BookText } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,32 +22,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { toggleProjectVisibility, deleteProject } from "@/actions/projects";
+import { deleteProject } from "@/actions/projects";
 import { STATUS_LABELS, STATUS_COLORS, HORIZON_LABELS, HORIZON_COLORS, Project } from "@/types/project";
 
 interface ProjectDetailViewProps {
   project: Project;
 }
 
-const ProjectDetailView = ({ project: initialProject }: ProjectDetailViewProps) => {
+const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
   const router = useRouter();
-  const [project, setProject] = useState<Project>(initialProject);
-
-  const handleTogglePublic = async () => {
-    try {
-      const updated = await toggleProjectVisibility(project.id, !project.est_public);
-      setProject(updated);
-      toast.success(updated.est_public ? "Projet public" : "Projet privé", {
-        description: updated.est_public
-          ? "Ce projet est maintenant visible dans le portfolio."
-          : "Ce projet n'est plus visible dans le portfolio.",
-      });
-    } catch (error) {
-      toast.error("Erreur", {
-        description: "Impossible de modifier la visibilité.",
-      });
-    }
-  };
 
   const handleDelete = async () => {
     try {
@@ -86,9 +70,6 @@ const ProjectDetailView = ({ project: initialProject }: ProjectDetailViewProps) 
           </div>
 
           <div className="absolute top-4 right-4 flex gap-2">
-            <Button variant="glass" size="icon-sm" onClick={handleTogglePublic}>
-              {project.est_public ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-            </Button>
             <Link href={`/edit/${project.id}`}>
               <Button variant="glass" size="icon-sm">
                 <Edit2 className="w-4 h-4" />
@@ -125,12 +106,6 @@ const ProjectDetailView = ({ project: initialProject }: ProjectDetailViewProps) 
                   {HORIZON_LABELS[project.horizon_temps]}
                 </Badge>
                 <span className="text-sm font-medium text-primary uppercase tracking-wider">{project.categorie}</span>
-                {project.est_public && (
-                  <Badge variant="outline" className="ml-auto">
-                    <Eye className="w-3 h-3 mr-1" />
-                    Public
-                  </Badge>
-                )}
               </div>
 
               <h1 className="text-3xl md:text-4xl font-bold mb-4">{project.titre}</h1>
@@ -147,16 +122,27 @@ const ProjectDetailView = ({ project: initialProject }: ProjectDetailViewProps) 
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground pt-4 border-t border-border">
-                <Calendar className="w-4 h-4" />
-                <span>
-                  Créé le{" "}
-                  {new Date(project.date_creation).toLocaleDateString("fr-FR", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
+              <div className="flex items-center justify-between gap-4 flex-wrap pt-4 border-t border-border">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  <span>
+                    Créé le{" "}
+                    {new Date(project.date_creation).toLocaleDateString("fr-FR", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+
+                {project.est_espace_travail && (
+                  <Link href={`/projet/${project.id}/workspace`}>
+                    <Button variant="gradient" size="sm">
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      Ouvrir l&apos;espace de travail
+                    </Button>
+                  </Link>
+                )}
               </div>
             </Card>
 
@@ -169,6 +155,20 @@ const ProjectDetailView = ({ project: initialProject }: ProjectDetailViewProps) 
                   <h2 className="text-xl font-semibold">Description détaillée</h2>
                 </div>
                 <p className="text-muted-foreground whitespace-pre-line">{project.description_detaillee}</p>
+              </Card>
+            )}
+
+            {project.contenu_riche && (
+              <Card className="p-8 mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <BookText className="w-5 h-5 text-primary" />
+                  </div>
+                  <h2 className="text-xl font-semibold">Contenu détaillé</h2>
+                </div>
+                <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.contenu_riche}</ReactMarkdown>
+                </div>
               </Card>
             )}
 

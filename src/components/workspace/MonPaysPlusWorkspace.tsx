@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Lightbulb, Layers, Users, Map, BookOpen, NotebookPen,
@@ -21,88 +21,21 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { updateProjectWorkspace } from "@/actions/workspace";
+import type {
+  WorkspaceStore as Store,
+  WorkspaceId as ID,
+  Domain,
+  Initiative,
+  Contact,
+  Milestone,
+  WorkspaceTask as Task,
+  LibraryItem,
+  JournalEntry,
+  ConferenceSession,
+} from "@/types/workspace";
 
-/* ───────────────────────── Types ───────────────────────── */
-type ID = string;
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-
-type Domain = {
-  id: ID; name: string; slug: string; icon: string; color: string;
-  description: string; priority: number;
-};
-type Initiative = {
-  id: ID; title: string; domainId: ID | ""; country: string; countryCode: string;
-  description: string; mechanism: string; conditions: string; obstacles: string;
-  feasibility: number; adaptation: string; cost: "low" | "medium" | "high" | "very_high";
-  timelineYears: number;
-  status: "draft" | "documented" | "analyzed" | "proposed";
-  pinned: boolean; sources: { url: string; title: string }[]; tags: string[];
-  createdAt: number;
-};
-type Contact = {
-  id: ID; name: string; role: string; expertise: string; country: string;
-  email: string; linkedin: string;
-  relationship: "identified" | "contacted" | "connected" | "collaborator" | "speaker";
-  potential: number; notes: string; createdAt: number;
-};
-type Milestone = {
-  id: ID; title: string; description: string; year: number; quarter: number;
-  status: "planned" | "in_progress" | "completed" | "delayed";
-};
-type Task = {
-  id: ID; milestoneId: ID; title: string; status: "todo" | "in_progress" | "done";
-  dueDate: string;
-};
-type LibraryItem = {
-  id: ID; title: string; author: string;
-  type: "book" | "article" | "report" | "video" | "podcast" | "documentary" | "other";
-  domainId: ID | ""; url: string; summary: string; lessons: string;
-  rating: number; isRead: boolean; createdAt: number;
-};
-type JournalEntry = {
-  id: ID; title: string; content: string;
-  mood: "motivated" | "reflective" | "doubtful" | "energized" | "focused";
-  tags: string; createdAt: number;
-};
-type ConferenceSession = {
-  id: ID; title: string; description: string;
-  type: "keynote" | "panel" | "workshop" | "presentation";
-  duration: number; domainId: ID | "";
-  status: "idea" | "confirmed" | "finalized";
-  speakerIds: ID[];
-};
-
-type Store = {
-  domains: Domain[]; initiatives: Initiative[]; contacts: Contact[];
-  milestones: Milestone[]; tasks: Task[]; library: LibraryItem[];
-  journal: JournalEntry[]; sessions: ConferenceSession[];
-};
-
-const STORAGE_KEY = "monpaysplus_v1";
-
-const seedDomains: Domain[] = [
-  { id: uid(), name: "Éducation", slug: "education", icon: "📚", color: "#6B3A2A", description: "Systèmes éducatifs, réformes, pédagogie", priority: 1 },
-  { id: uid(), name: "Santé", slug: "sante", icon: "🩺", color: "#A63228", description: "Santé publique, accès aux soins", priority: 2 },
-  { id: uid(), name: "Économie", slug: "economie", icon: "📈", color: "#D4A853", description: "Modèles économiques, industrialisation", priority: 3 },
-  { id: uid(), name: "Agriculture", slug: "agriculture", icon: "🌾", color: "#4A7C59", description: "Souveraineté alimentaire, agroécologie", priority: 4 },
-  { id: uid(), name: "Gouvernance", slug: "gouvernance", icon: "⚖️", color: "#3E1F13", description: "Institutions, transparence, justice", priority: 5 },
-  { id: uid(), name: "Infrastructure", slug: "infrastructure", icon: "🏗️", color: "#9C5A3C", description: "Transports, énergie, numérique", priority: 6 },
-  { id: uid(), name: "Culture & Identité", slug: "culture", icon: "🎭", color: "#C4742A", description: "Patrimoine, langues, arts", priority: 7 },
-];
-
-const emptyStore: Store = {
-  domains: seedDomains, initiatives: [], contacts: [], milestones: [],
-  tasks: [], library: [], journal: [], sessions: [],
-};
-
-function loadStore(): Store {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return emptyStore;
-    return { ...emptyStore, ...JSON.parse(raw) };
-  } catch { return emptyStore; }
-}
-function saveStore(s: Store) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
 
 /* ───────────────────────── Constants & helpers ───────────────────────── */
 const NAV = [
@@ -126,21 +59,27 @@ const milestoneStatusLabel = { planned: "Planifié", in_progress: "En cours", co
 const fmt = (t: number) => new Date(t).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
 
 /* ───────────────────────── Page ───────────────────────── */
-export default function MonPaysPlus() {
-  const [store, setStore] = useState<Store>(emptyStore);
-  const [loaded, setLoaded] = useState(false);
-  const [tab, setTab] = useState<Tab>("dashboard");
+interface MonPaysPlusWorkspaceProps {
+  projectId: string;
+  initialStore: Store;
+}
 
-  // localStorage isn't available during SSR, so the real store is loaded
-  // client-side after mount, and persisted only once that initial load is done.
+export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPaysPlusWorkspaceProps) {
+  const [store, setStore] = useState<Store>(initialStore);
+  const [tab, setTab] = useState<Tab>("dashboard");
+  const isFirstRender = useRef(true);
+
+  // Skip the very first run — `store` at that point is exactly what the
+  // server just sent us, so persisting it back would be a wasted round-trip.
   useEffect(() => {
-    setStore(loadStore());
-    setLoaded(true);
-  }, []);
-  useEffect(() => {
-    if (!loaded) return;
-    saveStore(store);
-  }, [store, loaded]);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    updateProjectWorkspace(projectId, store).catch(() => {
+      toast.error("Erreur", { description: "Impossible de sauvegarder l'espace de travail." });
+    });
+  }, [store, projectId]);
   useEffect(() => {
     document.title = "MonPays+ — Observer le monde. Construire le Bénin.";
   }, []);

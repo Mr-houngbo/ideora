@@ -14,9 +14,11 @@ export function toProject(row: ProjectRow): Project {
     motivation: row.motivation ?? "",
     ressources: row.ressources ?? "",
     date_creation: row.dateCreation.toISOString(),
-    est_public: row.estPublic,
     // Embedded as a data URI so the image travels with the page's own query
     // instead of triggering a separate database round-trip per <img> tag.
     image_url: row.imageData ? `data:${row.imageMimeType || "application/octet-stream"};base64,${row.imageData}` : null,
+    contenu_riche: row.contenuRiche ?? "",
+    est_espace_travail: row.estEspaceTravail,
+    workspace_data: row.workspaceData ?? null,
   };
 }

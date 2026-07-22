@@ -12,8 +12,9 @@ function makeInput(overrides: Record<string, unknown> = {}) {
     tags: ["ia"],
     motivation: "Motivation",
     ressources: "https://example.com",
-    est_public: true,
     image_url: null,
+    contenu_riche: "",
+    est_espace_travail: false,
     ...overrides,
   };
 }

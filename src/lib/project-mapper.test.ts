@@ -15,9 +15,11 @@ function makeRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
     motivation: "Parce que",
     ressources: "https://example.com",
     dateCreation: new Date("2025-06-15T10:00:00.000Z"),
-    estPublic: true,
     imageData: "base64abc",
     imageMimeType: "image/jpeg",
+    contenuRiche: null,
+    estEspaceTravail: false,
+    workspaceData: null,
     ...overrides,
   };
 }
@@ -38,8 +40,10 @@ describe("toProject", () => {
       motivation: "Parce que",
       ressources: "https://example.com",
       date_creation: "2025-06-15T10:00:00.000Z",
-      est_public: true,
       image_url: "data:image/jpeg;base64,base64abc",
+      contenu_riche: "",
+      est_espace_travail: false,
+      workspace_data: null,
     });
   });
 

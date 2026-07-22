@@ -1,4 +1,5 @@
-import { pgTable, uuid, text, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import type { WorkspaceStore } from "@/types/workspace";
 
 export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -12,9 +13,11 @@ export const projects = pgTable("projects", {
   motivation: text("motivation"),
   ressources: text("ressources"),
   dateCreation: timestamp("date_creation", { withTimezone: true }).notNull().defaultNow(),
-  estPublic: boolean("est_public").notNull().default(false),
   imageData: text("image_data"), // base64-encoded image bytes, stored in Postgres — no external storage service
   imageMimeType: text("image_mime_type"),
+  contenuRiche: text("contenu_riche"), // optional Markdown body, rendered on the project detail page
+  estEspaceTravail: boolean("est_espace_travail").notNull().default(false), // unlocks the linked workspace tool
+  workspaceData: jsonb("workspace_data").$type<WorkspaceStore>(),
 });
 
 export type ProjectRow = typeof projects.$inferSelect;

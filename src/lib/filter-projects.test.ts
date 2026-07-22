@@ -15,8 +15,10 @@ function makeProject(overrides: Partial<Project> = {}): Project {
     motivation: "",
     ressources: "",
     date_creation: "2025-01-01T00:00:00.000Z",
-    est_public: false,
     image_url: null,
+    contenu_riche: "",
+    est_espace_travail: false,
+    workspace_data: null,
     ...overrides,
   };
 }

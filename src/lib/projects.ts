@@ -12,15 +12,6 @@ export async function getAllProjects(): Promise<Project[]> {
   return rows.map(toProject);
 }
 
-export async function getPublicProjects(): Promise<Project[]> {
-  const rows = await db
-    .select()
-    .from(projects)
-    .where(eq(projects.estPublic, true))
-    .orderBy(desc(projects.dateCreation));
-  return rows.map(toProject);
-}
-
 export async function getProjectById(id: string): Promise<Project | null> {
   const [row] = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
   return row ? toProject(row) : null;
