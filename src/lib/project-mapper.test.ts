@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toProject } from "@/lib/project-mapper";
+import { toProject, toProjectSummary } from "@/lib/project-mapper";
 import type { ProjectRow } from "@/db/schema";
 
 function makeRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
@@ -73,5 +73,31 @@ describe("toProject", () => {
     const project = toProject(makeRow({ tags: [] }));
 
     expect(project.tags).toEqual([]);
+  });
+});
+
+describe("toProjectSummary", () => {
+  it("maps the lean list-view row, blanking out heavy fields not selected", () => {
+    const project = toProjectSummary({
+      id: "1",
+      titre: "Projet léger",
+      categorie: "Tech",
+      descriptionCourte: "Résumé",
+      statut: "en_cours",
+      horizonTemps: "moyen_terme",
+      tags: ["ia"],
+      dateCreation: new Date("2025-06-15T10:00:00.000Z"),
+      imageData: "base64abc",
+      imageMimeType: "image/jpeg",
+      estEspaceTravail: false,
+    });
+
+    expect(project.image_url).toBe("data:image/jpeg;base64,base64abc");
+    expect(project.contenu_riche).toBe("");
+    expect(project.accent_theme).toBeNull();
+    expect(project.workspace_data).toBeNull();
+    expect(project.description_detaillee).toBe("");
+    expect(project.motivation).toBe("");
+    expect(project.ressources).toBe("");
   });
 });
