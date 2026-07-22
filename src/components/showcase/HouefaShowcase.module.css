@@ -1,0 +1,436 @@
+.showcase {
+  --bg: #0b0f0d;
+  --bg-raised: #121815;
+  --ink: #eef2ee;
+  --ink-dim: #93a49a;
+  --emerald: #2f8f6b;
+  --emerald-bright: #4ade9a;
+  --emerald-dim: #1c5940;
+  --terracotta: #c56a3e;
+  --hair: rgba(74, 222, 154, 0.14);
+  --display: var(--font-space-grotesk), sans-serif;
+  --body: var(--font-ibm-plex-sans), sans-serif;
+
+  position: relative;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.65;
+  overflow-x: clip;
+}
+
+.eyebrow {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--emerald-bright);
+}
+
+.showcase section {
+  position: relative;
+  padding: 6rem 1.5rem;
+}
+.bandA {
+  background: var(--bg);
+}
+.bandB {
+  background: var(--bg-raised);
+}
+
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+}
+.wrapWide {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.showcase h1,
+.showcase h2,
+.showcase h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+.sectionHeader h2 {
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  margin-top: 0.7rem;
+}
+.sectionSub {
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 1rem;
+  margin: 0.6rem auto 0;
+  max-width: 58ch;
+}
+
+.showcase p {
+  color: var(--ink-dim);
+  margin: 0 0 1rem;
+  max-width: 62ch;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.heroImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.heroFallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, var(--emerald-dim), var(--bg) 70%);
+}
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, var(--bg) 5%, rgba(11, 15, 13, 0.55) 55%, rgba(11, 15, 13, 0.25) 100%);
+}
+.heroInner {
+  position: relative;
+  z-index: 2;
+  padding: 4rem 1.5rem 5rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.heroTitle {
+  font-size: clamp(3rem, 10vw, 6rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.heroTagline {
+  font-style: italic;
+  font-family: var(--body);
+  color: var(--emerald-bright);
+  font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+  margin: 1rem 0 0;
+}
+.heroLede {
+  color: var(--ink-dim);
+  max-width: 46ch;
+  margin: 1rem auto 0;
+}
+.countdown {
+  display: inline-flex;
+  gap: 1.4rem;
+  margin-top: 2.2rem;
+  padding: 1rem 1.8rem;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: rgba(18, 24, 21, 0.6);
+  backdrop-filter: blur(6px);
+}
+.countdownUnit {
+  text-align: center;
+}
+.countdownNumber {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--emerald-bright);
+  font-variant-numeric: tabular-nums;
+}
+.countdownLabel {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+/* ---------- Quote block ---------- */
+.quoteBlock {
+  border-left: 2px solid var(--emerald);
+  padding-left: 1.4rem;
+  font-style: italic;
+  color: var(--ink);
+  max-width: 640px;
+  margin: 2rem auto 0;
+  font-size: 1.05rem;
+}
+.quoteAttribution {
+  display: block;
+  margin-top: 0.8rem;
+  font-style: normal;
+  font-family: var(--display);
+  font-size: 0.8rem;
+  color: var(--emerald-bright);
+}
+
+/* ---------- Dimension cards ---------- */
+.dimGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--hair);
+  border: 1px solid var(--hair);
+}
+@media (max-width: 860px) {
+  .dimGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.dimCard {
+  background: var(--bg);
+  padding: 2.4rem 2rem;
+  transition: background 0.35s ease;
+}
+.dimCard:hover {
+  background: var(--bg-raised);
+}
+.dimCard h3 {
+  font-size: 1.1rem;
+  color: var(--emerald-bright);
+  margin-bottom: 0.8rem;
+}
+
+/* ---------- Pillars ---------- */
+.pillarGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.4rem;
+}
+@media (max-width: 720px) {
+  .pillarGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.pillarCard {
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  padding: 2.2rem;
+  transition: border-color 0.35s ease, transform 0.35s ease;
+}
+.pillarCard:hover {
+  border-color: var(--emerald-dim);
+  transform: translateY(-3px);
+}
+.pillarNum {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--terracotta);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+.pillarCard h3 {
+  font-size: 1.15rem;
+  margin: 0.6rem 0 1rem;
+  color: var(--ink);
+}
+.pillarCard ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pillarCard li {
+  font-size: 0.88rem;
+  color: var(--ink-dim);
+  padding: 0.3rem 0;
+  display: flex;
+  gap: 0.5rem;
+}
+.pillarDot {
+  color: var(--emerald-bright);
+  flex-shrink: 0;
+}
+
+/* ---------- Table (revenue) ---------- */
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.table th {
+  text-align: left;
+  padding: 0.9rem 1.2rem;
+  background: var(--bg-raised);
+  color: var(--emerald-bright);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.table td {
+  padding: 0.75rem 1.2rem;
+  border-top: 1px solid var(--hair);
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+.table tr.total td {
+  color: var(--ink);
+  font-weight: 700;
+  border-top: 2px solid var(--emerald-dim);
+}
+
+/* ---------- Roadmap ---------- */
+.spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--emerald-dim) 10%, var(--emerald-dim) 90%, transparent);
+  transform: translateX(-50%);
+}
+.rmRow {
+  display: grid;
+  grid-template-columns: 1fr 2.4rem 1fr;
+  align-items: center;
+  margin-bottom: 2.6rem;
+}
+.rmRow:last-child {
+  margin-bottom: 0;
+}
+.rmCard {
+  border: 1px solid var(--hair);
+  background: var(--bg-raised);
+  padding: 1.5rem 1.7rem;
+}
+.rmRowRight .rmCard {
+  grid-column: 3;
+}
+.rmRowLeft .rmCard {
+  grid-column: 1;
+}
+@media (max-width: 640px) {
+  .rmRow {
+    grid-template-columns: 2rem 1fr;
+  }
+  .rmRowRight .rmCard,
+  .rmRowLeft .rmCard {
+    grid-column: 2;
+  }
+}
+.rmNode {
+  grid-column: 2;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  border: 1px solid var(--emerald-bright);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 0.7rem;
+  color: var(--emerald-bright);
+  z-index: 2;
+}
+@media (max-width: 640px) {
+  .rmNode {
+    grid-column: 1;
+  }
+}
+.rmYear {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--terracotta);
+  font-size: 0.78rem;
+}
+.rmCard h3 {
+  font-size: 1.05rem;
+  margin: 0.4rem 0 0.4rem;
+  color: var(--ink);
+}
+.rmCard p {
+  font-size: 0.86rem;
+  max-width: none;
+  margin: 0;
+}
+
+/* ---------- Team ---------- */
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.4rem;
+}
+.teamCard {
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  padding: 1.8rem;
+}
+.teamName {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--emerald-bright);
+  font-size: 1.05rem;
+}
+.teamRole {
+  font-size: 0.82rem;
+  color: var(--terracotta);
+  margin: 0.3rem 0 0.8rem;
+}
+.teamCard p {
+  font-size: 0.85rem;
+  max-width: none;
+  margin: 0;
+}
+
+/* ---------- KPI ---------- */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--hair);
+  border: 1px solid var(--hair);
+}
+@media (max-width: 640px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.stat {
+  background: var(--bg);
+  padding: 2.2rem 1rem;
+  text-align: center;
+}
+.statNumber {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  color: var(--emerald-bright);
+  font-variant-numeric: tabular-nums;
+}
+.statLabel {
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  margin-top: 0.5rem;
+}
+
+.footer {
+  text-align: center;
+  padding: 2.4rem 1.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+  background: var(--bg);
+}
+.footer .confidential {
+  display: block;
+  margin-top: 0.4rem;
+  font-style: italic;
+  opacity: 0.7;
+}

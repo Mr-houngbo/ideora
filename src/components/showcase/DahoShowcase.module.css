@@ -1,0 +1,421 @@
+.showcase {
+  --bg: #0e0e0e;
+  --bg-raised: #181310;
+  --ink: #f5f1ea;
+  --ink-dim: #a89f8f;
+  --orange: #ff6b35;
+  --orange-soft: #ff8c42;
+  --orange-dim: #b84a1f;
+  --hair: rgba(255, 107, 53, 0.16);
+  --display: var(--font-poppins), sans-serif;
+  --body: var(--font-inter), sans-serif;
+
+  position: relative;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.65;
+  overflow-x: clip;
+}
+
+.showcase a {
+  color: var(--orange-soft);
+}
+
+.eyebrow {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+
+.showcase section {
+  position: relative;
+  padding: 6rem 1.5rem;
+}
+.bandA {
+  background: var(--bg);
+}
+.bandB {
+  background: var(--bg-raised);
+}
+
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+}
+.wrapWide {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.showcase h1,
+.showcase h2,
+.showcase h3 {
+  font-family: var(--display);
+  font-weight: 800;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+.sectionHeader h2 {
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  margin-top: 0.7rem;
+}
+.sectionSub {
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 1rem;
+  margin: 0.6rem auto 0;
+  max-width: 56ch;
+}
+
+.showcase p {
+  color: var(--ink-dim);
+  margin: 0 0 1rem;
+  max-width: 62ch;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: radial-gradient(ellipse 1000px 700px at 50% 30%, rgba(255, 107, 53, 0.18), transparent 60%), var(--bg);
+  overflow: hidden;
+}
+.heroGrid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image: linear-gradient(var(--hair) 1px, transparent 1px), linear-gradient(90deg, var(--hair) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 75%);
+}
+.heroInner {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+}
+.heroTitle {
+  font-size: clamp(4rem, 15vw, 9rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--orange-soft), var(--orange), var(--orange-dim));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.heroTagline {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  margin: 1.4rem 0 0;
+  color: var(--ink);
+}
+.heroLede {
+  color: var(--ink-dim);
+  max-width: 46ch;
+  margin: 1.2rem auto 0;
+  font-size: 1rem;
+}
+.heroEtymology {
+  margin-top: 2.4rem;
+  font-style: italic;
+  color: var(--orange-soft);
+  font-size: 0.95rem;
+}
+
+/* ---------- Contrast cards (Vision) ---------- */
+.contrastGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6rem;
+}
+@media (max-width: 720px) {
+  .contrastGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.contrastCard {
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  padding: 2.4rem;
+  transition: border-color 0.35s ease, transform 0.35s ease;
+}
+.contrastCard:hover {
+  border-color: var(--orange-dim);
+  transform: translateY(-3px);
+}
+.contrastCard h3 {
+  font-size: 1.3rem;
+  color: var(--orange-soft);
+  margin-bottom: 1rem;
+}
+.contrastQuote {
+  margin-top: 1.2rem;
+  font-style: italic;
+  color: var(--ink);
+  border-left: 2px solid var(--orange);
+  padding-left: 1rem;
+  font-size: 0.95rem;
+}
+
+/* ---------- Feature / model cards ---------- */
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--hair);
+  border: 1px solid var(--hair);
+}
+@media (max-width: 860px) {
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.featureCard {
+  background: var(--bg);
+  padding: 2.4rem 2rem;
+  transition: background 0.35s ease;
+}
+.featureCard:hover {
+  background: var(--bg-raised);
+}
+.featureNum {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: var(--orange-dim);
+}
+.featureCard h3 {
+  font-size: 1.15rem;
+  margin: 0.8rem 0 1rem;
+  color: var(--ink);
+}
+.featureCard ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.featureCard li {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--ink-dim);
+  padding: 0.35rem 0;
+}
+.featureDot {
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+/* ---------- Week program cards ---------- */
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.4rem;
+}
+.weekCard {
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  padding: 2rem;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.weekCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -28px rgba(255, 107, 53, 0.5);
+}
+.weekTag {
+  display: inline-block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--bg);
+  background: var(--orange);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+.weekCard h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+  color: var(--ink);
+}
+.weekDeliverable {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: var(--orange-soft);
+  font-weight: 600;
+}
+
+/* ---------- Numbers ---------- */
+.numbersGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--hair);
+  border: 1px solid var(--hair);
+}
+@media (max-width: 640px) {
+  .numbersGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.stat {
+  background: var(--bg-raised);
+  padding: 2.4rem 1rem;
+  text-align: center;
+}
+.statNumber {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  color: var(--orange);
+  font-variant-numeric: tabular-nums;
+}
+.statLabel {
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  margin-top: 0.5rem;
+}
+
+/* ---------- Roadmap (horizontal-ish) ---------- */
+.roadmapGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  background: var(--hair);
+  border: 1px solid var(--hair);
+}
+.roadmapItem {
+  background: var(--bg);
+  padding: 1.8rem 1.2rem;
+}
+.roadmapMonth {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--orange);
+  text-transform: uppercase;
+}
+.roadmapItem p {
+  font-size: 0.82rem;
+  margin: 0.6rem 0 0;
+  color: var(--ink-dim);
+  max-width: none;
+}
+
+/* ---------- Budget table ---------- */
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.table th {
+  text-align: left;
+  padding: 0.9rem 1.2rem;
+  background: var(--bg-raised);
+  color: var(--orange-soft);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.table td {
+  padding: 0.75rem 1.2rem;
+  border-top: 1px solid var(--hair);
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+.table tr.total td {
+  color: var(--ink);
+  font-weight: 700;
+  border-top: 2px solid var(--orange-dim);
+}
+
+/* ---------- Impact horizon cards ---------- */
+.horizonGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem;
+}
+@media (max-width: 860px) {
+  .horizonGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.horizonCard {
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  padding: 2rem;
+}
+.horizonYear {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--orange);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.horizonCard h3 {
+  font-size: 1.05rem;
+  margin: 0.5rem 0 1rem;
+  color: var(--ink);
+}
+.horizonCard ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.horizonCard li {
+  font-size: 0.86rem;
+  color: var(--ink-dim);
+  padding: 0.3rem 0;
+}
+
+/* ---------- CTA / footer ---------- */
+.cta {
+  text-align: center;
+  padding: 7rem 1.5rem;
+  background: linear-gradient(180deg, var(--bg-raised), var(--bg));
+}
+.ctaTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 1.2rem;
+}
+.ctaBody {
+  max-width: 50ch;
+  margin: 0 auto 1.6rem;
+}
+.ctaContact {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.footer {
+  text-align: center;
+  padding: 2.4rem 1.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  background: var(--bg);
+}

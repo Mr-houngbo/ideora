@@ -90,7 +90,7 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
       <>
         <Header />
         {managementControls}
-        <CustomShowcase />
+        <CustomShowcase project={project} />
       </>
     );
   }

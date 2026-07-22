@@ -1,50 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { useInView } from "framer-motion";
 import { Crown, Coins, ScrollText, BookOpen, Gavel, Heart, Check, X } from "lucide-react";
 import { cinzel, cormorantGaramond, jetbrainsMono } from "./fonts";
+import { Reveal, useCountUp, type ShowcaseComponentProps } from "./shared";
 import styles from "./PerseusShowcase.module.css";
-
-function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 32 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function useCountUp(target: number, start: boolean, duration = 1400) {
-  const [value, setValue] = useState(0);
-  const reduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (!start) return;
-    if (reduceMotion) {
-      setValue(target);
-      return;
-    }
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (t: number) => {
-      const progress = Math.min((t - t0) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.round(target * eased));
-      if (progress < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration, start, reduceMotion]);
-
-  return value;
-}
 
 function Stat({ target, label }: { target: number; label: string }) {
   const ref = useRef(null);
@@ -155,7 +116,7 @@ const INTERDITS = [
   "Utiliser le cercle pour un intérêt strictement personnel.",
 ];
 
-export default function PerseusShowcase() {
+export default function PerseusShowcase(_props: ShowcaseComponentProps) {
   return (
     <div className={`${styles.showcase} ${cinzel.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
       <div className={styles.grain} aria-hidden="true" />
