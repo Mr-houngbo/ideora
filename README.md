@@ -7,7 +7,8 @@ Tracker personnel d'ambitions et de projets — business et académique — depu
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
 - [Neon](https://neon.tech) (PostgreSQL) + [Drizzle ORM](https://orm.drizzle.team)
 - Session serveur signée (JWT via `jose`) + mot de passe hashé (`bcryptjs`), toutes les routes protégées via `proxy.ts`
-- Images stockées en base64 directement dans Neon (aucun service de stockage tiers), servies via `/api/images/[id]`
+- Images stockées en base64 directement dans Neon (aucun service de stockage tiers), embarquées dans la même requête que le projet
+- Chaque projet peut avoir un contenu riche en Markdown (`contenu_riche`) et, optionnellement, un espace de travail dédié (`/projet/[id]/workspace`) pour les idées qui demandent plus de profondeur qu'une simple fiche
 - shadcn/ui, Tailwind CSS, Framer Motion, Zustand (filtres UI uniquement)
 - [Vitest](https://vitest.dev) pour les tests
 
@@ -34,3 +35,4 @@ Tracker personnel d'ambitions et de projets — business et académique — depu
 - `npm test` — tests Vitest
 - `npm run db:push` / `npm run db:studio` — Drizzle
 - `npm run migrate:data` — migration ponctuelle des données depuis `data.csv` (export de l'ancienne table `projets`) vers Neon ; télécharge aussi chaque image encore accessible publiquement
+- `npm run seed:showcase` — crée les fiches projet pour les anciennes pages vitrines (Daho, Houefa, Perseus, Vision Éducation, MonPays+), à exécuter une seule fois après `db:push`
