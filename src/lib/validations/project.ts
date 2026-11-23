@@ -15,6 +15,9 @@ export const projectFormSchema = z.object({
   contenu_riche: z.string().trim().default(""),
   accent_theme: z.string().nullable().default(null),
   est_espace_travail: z.boolean().default(false),
+  prochaine_etape: z.string().trim().default(""),
+  prochaine_etape_date: z.string().refine(isDayString, "Date invalide").nullable().default(null),
+  a_la_une: z.boolean().default(false),
   // The day the idea came. Optional so older clients and scripts keep working;
   // when absent, a new project is dated now and an edit keeps its date.
   date_idee: z

@@ -21,9 +21,38 @@ export interface Project {
   est_espace_travail: boolean;
   workspace_data: WorkspaceStore | null;
   custom_template: string | null;
+  /** The next concrete action ("" when none). */
+  prochaine_etape: string;
+  /** Its target day, YYYY-MM-DD. */
+  prochaine_etape_date: string | null;
+  /** Picked by hand for the home page "À la une". */
+  a_la_une: boolean;
+  mis_a_jour_le: string;
 }
 
-export type ProjectFormData = Omit<Project, 'id' | 'date_creation' | 'workspace_data' | 'custom_template'> & {
+export type JournalType = 'note' | 'jalon' | 'statut' | 'promesse';
+
+export interface JournalEntry {
+  id: string;
+  project_id: string;
+  type: JournalType;
+  titre: string;
+  contenu: string;
+  /** jalon: target day; promesse: day to read it again (YYYY-MM-DD). */
+  date_prevue: string | null;
+  /** jalon reached, or promesse read again. */
+  fait_le: string | null;
+  ecrit_le: string;
+}
+
+export const JOURNAL_LABELS: Record<JournalType, string> = {
+  note: 'Note',
+  jalon: 'Jalon',
+  statut: 'Statut',
+  promesse: 'Promesse au moi futur',
+};
+
+export type ProjectFormData = Omit<Project, 'id' | 'date_creation' | 'workspace_data' | 'custom_template' | 'mis_a_jour_le'> & {
   /** Day the idea was first recorded, as YYYY-MM-DD. */
   date_idee: string;
 };

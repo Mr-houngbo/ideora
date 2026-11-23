@@ -9,6 +9,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import ProjectCover from "@/components/projects/ProjectCover";
 import { formatIdeaDate } from "@/lib/idea-dates";
+import NextStep from "@/components/projects/NextStep";
 
 interface ProjectCardProps {
   project: Project;
@@ -107,6 +108,8 @@ const ProjectCard = ({ project, index = 0, variant = "default" }: ProjectCardPro
             <p className={cn("text-sm text-muted-foreground mb-4 flex-1", wide ? "line-clamp-4" : "line-clamp-2")}>
               {project.description_courte}
             </p>
+
+            <NextStep step={project.prochaine_etape} day={project.prochaine_etape_date} compact className="mb-3" />
 
             {project.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">

@@ -33,6 +33,7 @@ import {
   STATUS_COLORS,
   HORIZON_LABELS,
   isEducationCategory,
+  type JournalEntry,
   type Project,
 } from "@/types/project";
 import { getAccentTheme } from "@/lib/accent-themes";
@@ -43,9 +44,12 @@ import RichMarkdown from "@/components/projects/RichMarkdown";
 import ProjectCover from "@/components/projects/ProjectCover";
 import ResourceList from "@/components/projects/ResourceList";
 import { SHOWCASE_TEMPLATES } from "@/components/showcase";
+import Journal from "@/components/projects/Journal";
+import NextStep from "@/components/projects/NextStep";
 
 interface ProjectDetailViewProps {
   project: Project;
+  journal?: JournalEntry[];
 }
 
 function IdeaDate({ iso, className }: { iso: string; className?: string }) {
@@ -139,7 +143,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{children}</h2>;
 }
 
-const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
+const ProjectDetailView = ({ project, journal = [] }: ProjectDetailViewProps) => {
   const router = useRouter();
   const theme = getAccentTheme(project.accent_theme);
   const isAcademic = isEducationCategory(project.categorie);
@@ -163,6 +167,13 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
         <ShowcaseBar project={project} onDelete={handleDelete} />
         <CustomShowcase project={project} />
         {project.contenu_riche && <FullDossier project={project} />}
+        <section id="evolution" className="scroll-mt-16 border-t border-border bg-background">
+          <div className="container max-w-3xl py-12">
+            <SectionTitle>Évolution</SectionTitle>
+            <NextStep step={project.prochaine_etape} day={project.prochaine_etape_date} className="mb-6" />
+            <Journal projectId={project.id} entries={journal} bornAt={project.date_creation} />
+          </div>
+        </section>
       </>
     );
   }
@@ -265,10 +276,16 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
                 </Link>
               </section>
             )}
+
+            <section id="evolution" className="scroll-mt-24">
+              <SectionTitle>Évolution</SectionTitle>
+              <Journal projectId={project.id} entries={journal} bornAt={project.date_creation} />
+            </section>
           </article>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm">
+              <NextStep step={project.prochaine_etape} day={project.prochaine_etape_date} />
               <dl className="space-y-4 text-sm">
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Statut</dt>

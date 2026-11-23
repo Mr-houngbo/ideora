@@ -22,6 +22,10 @@ function makeRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
     estEspaceTravail: false,
     workspaceData: null,
     customTemplate: null,
+    prochaineEtape: null,
+    prochaineEtapeDate: null,
+    aLaUne: false,
+    misAJourLe: new Date("2025-06-16T10:00:00.000Z"),
     ...overrides,
   };
 }
@@ -48,6 +52,10 @@ describe("toProject", () => {
       est_espace_travail: false,
       workspace_data: null,
       custom_template: null,
+      prochaine_etape: "",
+      prochaine_etape_date: null,
+      a_la_une: false,
+      mis_a_jour_le: "2025-06-16T10:00:00.000Z",
     });
   });
 
@@ -92,6 +100,11 @@ describe("toProjectSummary", () => {
       imageVersion: "abc123",
       estEspaceTravail: false,
       accentTheme: null,
+      customTemplate: "houefa",
+      prochaineEtape: "Appeler la mairie",
+      prochaineEtapeDate: "2026-12-01",
+      aLaUne: true,
+      misAJourLe: new Date("2025-06-16T10:00:00.000Z"),
     });
 
     expect(project.image_url).toBe("/api/images/1?v=abc123");
@@ -101,5 +114,10 @@ describe("toProjectSummary", () => {
     expect(project.description_detaillee).toBe("");
     expect(project.motivation).toBe("");
     expect(project.ressources).toBe("");
+    // Small fields the home page needs are kept.
+    expect(project.custom_template).toBe("houefa");
+    expect(project.prochaine_etape).toBe("Appeler la mairie");
+    expect(project.prochaine_etape_date).toBe("2026-12-01");
+    expect(project.a_la_une).toBe(true);
   });
 });

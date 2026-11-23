@@ -27,17 +27,17 @@ function hash(value: string): number {
 }
 
 /**
- * The project shown "À la une": one of the showcases (the most worked-out
+ * The project shown "À la une": the one picked by hand, else one of the showcases (the most worked-out
  * ideas), else a project in progress, else the latest idea. Among several
  * candidates it changes once a day: the home page shows a new face each day
  * but stays the same between reloads.
  */
-export function pickFeatured<T extends Pick<Project, "id" | "titre" | "statut" | "custom_template" | "date_creation" | "image_url">>(
-  projects: T[],
-  now: Date = new Date(),
-): T | null {
+export function pickFeatured<
+  T extends Pick<Project, "id" | "titre" | "statut" | "custom_template" | "date_creation" | "image_url" | "a_la_une">,
+>(projects: T[], now: Date = new Date()): T | null {
   if (projects.length === 0) return null;
   const pools = [
+    projects.filter((p) => p.a_la_une),
     projects.filter((p) => p.custom_template),
     projects.filter((p) => p.statut === "en_cours"),
     projects.filter((p) => p.image_url),

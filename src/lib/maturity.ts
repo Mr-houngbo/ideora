@@ -25,6 +25,7 @@ export function getMaturity(p: Project): Maturity {
     { key: "ressources", label: "Des ressources", done: p.ressources.trim().length > 0 },
     { key: "tags", label: "Au moins 3 tags", done: p.tags.length >= 3 },
     { key: "visuel", label: "Une image ou un dossier riche", done: Boolean(p.image_url) || p.contenu_riche.trim().length > 0 },
+    { key: "etape", label: "Une prochaine étape", done: p.prochaine_etape.trim().length > 0 },
   ];
   const score = checks.filter((c) => c.done).length;
   const level = score <= 1 ? "Esquisse" : score <= 3 ? "Décrite" : score <= 5 ? "Approfondie" : "Documentée";

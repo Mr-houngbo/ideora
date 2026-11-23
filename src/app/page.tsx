@@ -1,11 +1,11 @@
 import { verifySession } from "@/lib/dal";
-import { getAllProjects } from "@/lib/projects";
+import { getAllProjects, getDuePromises } from "@/lib/projects";
 import { featuredIdFor } from "@/lib/home";
 import ProjectsHome from "@/components/home/ProjectsHome";
 
 export default async function HomePage() {
   await verifySession();
-  const projects = await getAllProjects();
+  const [projects, duePromises] = await Promise.all([getAllProjects(), getDuePromises()]);
 
-  return <ProjectsHome projects={projects} kind="entreprise" featuredId={featuredIdFor(projects, false)} />;
+  return <ProjectsHome projects={projects} kind="entreprise" featuredId={featuredIdFor(projects, false)} duePromises={duePromises} />;
 }
