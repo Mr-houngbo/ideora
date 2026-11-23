@@ -58,12 +58,12 @@ export default function PortfolioManager({ projects, shares }: { projects: Proje
           </p>
         </header>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <section aria-labelledby="pick-title">
             <h2 id="pick-title" className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               {picked.size} {picked.size > 1 ? "idées incluses" : "idée incluse"} sur {projects.length}
             </h2>
-            <ul className="grid gap-3 sm:grid-cols-2">
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {projects.map((p) => {
                 const on = picked.has(p.id);
                 return (
