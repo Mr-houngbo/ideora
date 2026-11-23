@@ -40,6 +40,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
                 <img
                   src={project.image_url}
                   alt={project.titre}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />

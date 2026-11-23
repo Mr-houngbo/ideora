@@ -1,10 +1,20 @@
+import { createHash } from "node:crypto";
 import type { ProjectRow } from "@/db/schema";
 import type { Project } from "@/types/project";
 
-function buildImageUrl(imageData: string | null, imageMimeType: string | null): string | null {
-  // Embedded as a data URI so the image travels with the page's own query
-  // instead of triggering a separate database round-trip per <img> tag.
-  return imageData ? `data:${imageMimeType || "application/octet-stream"};base64,${imageData}` : null;
+/** Short content fingerprint of the stored base64 image, used to bust the HTTP cache when it changes. */
+export function imageVersionOf(imageData: string): string {
+  return createHash("md5").update(imageData).digest("hex").slice(0, 10);
+}
+
+/**
+ * Images are served by /api/images/[id] rather than inlined as data URIs, so
+ * list pages no longer ship every project's full image in the HTML payload
+ * and the browser can cache each image independently. The version query
+ * string changes whenever the image does.
+ */
+export function buildImageUrl(id: string, imageVersion: string | null): string | null {
+  return imageVersion ? `/api/images/${id}?v=${imageVersion}` : null;
 }
 
 export function toProject(row: ProjectRow): Project {
@@ -20,7 +30,7 @@ export function toProject(row: ProjectRow): Project {
     motivation: row.motivation ?? "",
     ressources: row.ressources ?? "",
     date_creation: row.dateCreation.toISOString(),
-    image_url: buildImageUrl(row.imageData, row.imageMimeType),
+    image_url: buildImageUrl(row.id, row.imageData ? imageVersionOf(row.imageData) : null),
     contenu_riche: row.contenuRiche ?? "",
     accent_theme: row.accentTheme ?? null,
     est_espace_travail: row.estEspaceTravail,
@@ -38,8 +48,7 @@ export interface ProjectSummaryRow {
   horizonTemps: string;
   tags: string[];
   dateCreation: Date;
-  imageData: string | null;
-  imageMimeType: string | null;
+  imageVersion: string | null; // computed in SQL so the image bytes never leave the database
   estEspaceTravail: boolean;
 }
 
@@ -62,7 +71,7 @@ export function toProjectSummary(row: ProjectSummaryRow): Project {
     motivation: "",
     ressources: "",
     date_creation: row.dateCreation.toISOString(),
-    image_url: buildImageUrl(row.imageData, row.imageMimeType),
+    image_url: buildImageUrl(row.id, row.imageVersion),
     contenu_riche: "",
     accent_theme: null,
     est_espace_travail: row.estEspaceTravail,
