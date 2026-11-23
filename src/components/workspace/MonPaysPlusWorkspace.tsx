@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { updateProjectWorkspace } from "@/actions/workspace";
+import { holdLightTheme } from "@/lib/theme";
 import type { WorkspaceStore as Store } from "@/types/workspace";
 import { Style, Sidebar, MobileNav } from "./monpaysplus/shared";
 import type { Tab } from "./monpaysplus/shared";
@@ -39,6 +40,8 @@ export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPay
       toast.error("Erreur", { description: "Impossible de sauvegarder l'espace de travail." });
     });
   }, [store, projectId]);
+  // The workspace has its own light palette; keep the app's dark tokens away from its dialogs and inputs.
+  useEffect(() => holdLightTheme(), []);
   useEffect(() => {
     document.title = "MonPays+ — Observer le monde. Construire le Bénin.";
   }, []);
