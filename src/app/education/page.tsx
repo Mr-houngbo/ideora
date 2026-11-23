@@ -1,10 +1,11 @@
 import { verifySession } from "@/lib/dal";
 import { getAllProjects } from "@/lib/projects";
-import AcademicProjectsView from "@/components/pages/AcademicProjectsView";
+import { featuredIdFor } from "@/lib/home";
+import ProjectsHome from "@/components/home/ProjectsHome";
 
 export default async function EducationPage() {
   await verifySession();
   const projects = await getAllProjects();
 
-  return <AcademicProjectsView projects={projects} />;
+  return <ProjectsHome projects={projects} kind="education" featuredId={featuredIdFor(projects, true)} />;
 }
