@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import type { ProjectRow } from "@/db/schema";
-import type { Project } from "@/types/project";
+import type { JournalRow, ProjectRow } from "@/db/schema";
+import type { JournalEntry, Project } from "@/types/project";
 
 /** Short content fingerprint of the stored base64 image, used to bust the HTTP cache when it changes. */
 export function imageVersionOf(imageData: string): string {
@@ -36,6 +36,23 @@ export function toProject(row: ProjectRow): Project {
     est_espace_travail: row.estEspaceTravail,
     workspace_data: row.workspaceData ?? null,
     custom_template: row.customTemplate ?? null,
+    prochaine_etape: row.prochaineEtape ?? "",
+    prochaine_etape_date: row.prochaineEtapeDate ?? null,
+    a_la_une: row.aLaUne,
+    mis_a_jour_le: row.misAJourLe.toISOString(),
+  };
+}
+
+export function toJournalEntry(row: JournalRow): JournalEntry {
+  return {
+    id: row.id,
+    project_id: row.projectId,
+    type: row.type as JournalEntry["type"],
+    titre: row.titre,
+    contenu: row.contenu ?? "",
+    date_prevue: row.datePrevue ?? null,
+    fait_le: row.faitLe ? row.faitLe.toISOString() : null,
+    ecrit_le: row.ecritLe.toISOString(),
   };
 }
 
@@ -51,6 +68,11 @@ export interface ProjectSummaryRow {
   imageVersion: string | null; // computed in SQL so the image bytes never leave the database
   estEspaceTravail: boolean;
   accentTheme: string | null; // tiny; colours the generated cover of projects without an image
+  customTemplate: string | null; // marks showcases (bento layout, "À la une")
+  prochaineEtape: string | null;
+  prochaineEtapeDate: string | null;
+  aLaUne: boolean;
+  misAJourLe: Date;
 }
 
 /**
@@ -77,6 +99,10 @@ export function toProjectSummary(row: ProjectSummaryRow): Project {
     accent_theme: row.accentTheme ?? null,
     est_espace_travail: row.estEspaceTravail,
     workspace_data: null,
-    custom_template: null,
+    custom_template: row.customTemplate ?? null,
+    prochaine_etape: row.prochaineEtape ?? "",
+    prochaine_etape_date: row.prochaineEtapeDate ?? null,
+    a_la_une: row.aLaUne,
+    mis_a_jour_le: row.misAJourLe.toISOString(),
   };
 }

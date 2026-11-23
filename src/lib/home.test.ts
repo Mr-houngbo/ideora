@@ -7,6 +7,7 @@ const p = (id: string, titre: string, date: string, extra: Record<string, unknow
   date_creation: date,
   statut: "idee" as const,
   custom_template: null as string | null,
+  a_la_une: false,
   image_url: null as string | null,
   ...extra,
 });
@@ -27,6 +28,10 @@ describe("pickFeatured", () => {
     const first = pickFeatured(list, day);
     expect(["b", "c"]).toContain(first?.id);
     expect(pickFeatured(list, new Date("2026-11-23T20:00:00Z"))?.id).toBe(first?.id);
+  });
+  it("puts the hand-picked project first", () => {
+    const list = [p("b", "B", "2025-12-02", { custom_template: "x" }), p("a", "A", "2025-12-01", { a_la_une: true })];
+    expect(pickFeatured(list)?.id).toBe("a");
   });
   it("falls back to the latest idea", () => {
     expect(pickFeatured([p("a", "A", "2025-12-01"), p("b", "B", "2026-01-01")])?.id).toBe("b");

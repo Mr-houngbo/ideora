@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Image as ImageIcon, Loader2, Save, ArrowLeft, Briefcase, GraduationCap, Sparkles, Check, CalendarHeart } from "lucide-react";
+import { X, Image as ImageIcon, Loader2, Save, ArrowLeft, Briefcase, GraduationCap, Sparkles, Check, CalendarHeart, Footprints } from "lucide-react";
 import { toDayString } from "@/lib/idea-dates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,6 +68,9 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
     accent_theme: initialData?.accent_theme || null,
     est_espace_travail: initialData?.est_espace_travail || false,
     date_idee: toDayString(initialData?.date_creation ?? new Date()),
+    prochaine_etape: initialData?.prochaine_etape || "",
+    prochaine_etape_date: initialData?.prochaine_etape_date || null,
+    a_la_une: initialData?.a_la_une || false,
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -458,6 +461,29 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="prochaine_etape" className="font-semibold flex items-center gap-2">
+              <Footprints className="w-4 h-4 text-primary" />
+              Prochaine étape
+            </Label>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input
+                id="prochaine_etape"
+                value={formData.prochaine_etape}
+                onChange={(e) => handleChange("prochaine_etape", e.target.value)}
+                placeholder="La prochaine action concrète, même petite"
+                className="flex-1"
+              />
+              <Input
+                type="date"
+                aria-label="Date cible de la prochaine étape"
+                value={formData.prochaine_etape_date ?? ""}
+                onChange={(e) => handleChange("prochaine_etape_date", e.target.value || null)}
+                className="sm:w-44"
+              />
+            </div>
+          </div>
+
         </Card>
 
         <Card className="p-6 space-y-6 card-premium">
@@ -515,6 +541,19 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
             />
             <Label htmlFor="est_espace_travail" className="cursor-pointer font-medium">
               Activer l&apos;espace de travail avancé (initiatives, contacts, roadmap, bibliothèque...)
+            </Label>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="a_la_une"
+              checked={formData.a_la_une}
+              onChange={(e) => handleChange("a_la_une", e.target.checked)}
+              className="w-5 h-5 rounded-lg border-border text-primary focus:ring-primary cursor-pointer"
+            />
+            <Label htmlFor="a_la_une" className="cursor-pointer font-medium">
+              Mettre ce projet à la une de l&apos;accueil (remplace celui qui y est)
             </Label>
           </div>
         </Card>

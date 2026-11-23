@@ -9,6 +9,8 @@ import ProjectFilters from "@/components/projects/ProjectFilters";
 import FloatingAddButton from "@/components/projects/FloatingAddButton";
 import FeaturedProject from "@/components/home/FeaturedProject";
 import IdeaThread from "@/components/home/IdeaThread";
+import QuickCapture from "@/components/home/QuickCapture";
+import DuePromises, { type DuePromise } from "@/components/home/DuePromises";
 import { useProjectStore } from "@/store/projectStore";
 import { effectiveCategory, filterProjects } from "@/lib/filter-projects";
 import { ideaThread, sortProjects } from "@/lib/home";
@@ -39,10 +41,12 @@ interface ProjectsHomeProps {
   kind: HomeKind;
   /** Picked on the server so the server and browser renders agree. */
   featuredId: string | null;
+  /** Promises to the future self whose day has come (shown on both home pages). */
+  duePromises?: DuePromise[];
 }
 
 /** The Entreprise and Académique home pages: manifesto, "À la une", line of thought, then every idea. */
-export default function ProjectsHome({ projects, kind, featuredId }: ProjectsHomeProps) {
+export default function ProjectsHome({ projects, kind, featuredId, duePromises = [] }: ProjectsHomeProps) {
   const { filters, sort } = useProjectStore();
   const academic = kind === "education";
   const categories = academic ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
@@ -150,6 +154,8 @@ export default function ProjectsHome({ projects, kind, featuredId }: ProjectsHom
           </dl>
         </motion.header>
 
+        <DuePromises promises={duePromises} />
+
         {!filtering && (featured || thread.length > 1) && (
           <div className="mb-14 space-y-6">
             {featured && <FeaturedProject project={featured} />}
@@ -162,6 +168,7 @@ export default function ProjectsHome({ projects, kind, featuredId }: ProjectsHom
             <h2 id="all-title" className="text-2xl font-bold sm:text-3xl">
               Toutes les idées
             </h2>
+            <QuickCapture academic={academic} />
           </div>
           <div className="mb-8">
             <ProjectFilters filterType={kind} resultCount={shown.length} />
