@@ -13,30 +13,34 @@ import { formatIdeaDate } from "@/lib/idea-dates";
 interface ProjectCardProps {
   project: Project;
   index?: number;
+  /** "wide" spans two grid columns, cover beside the text (bento layout). */
+  variant?: "default" | "wide";
 }
 
-const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
+const ProjectCard = ({ project, index = 0, variant = "default" }: ProjectCardProps) => {
+  const wide = variant === "wide";
   const isAcademic = isEducationCategory(project.categorie);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      className="h-full"
+      transition={{ duration: 0.5, delay: Math.min(index, 8) * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      className={cn("h-full", wide && "md:col-span-2")}
     >
       <Link href={`/projet/${project.id}`} className="block h-full">
         <Card
           hover
           className={cn(
             "group overflow-hidden h-full flex flex-col card-premium relative",
+            wide && "md:flex-row",
             "before:absolute before:inset-0 before:opacity-0 before:transition-opacity before:duration-500",
             isAcademic
               ? "before:bg-gradient-to-br before:from-academic/5 before:to-transparent hover:before:opacity-100"
               : "before:bg-gradient-to-br before:from-primary/5 before:to-transparent hover:before:opacity-100"
           )}
         >
-          <div className="relative h-52 overflow-hidden">
+          <div className={cn("relative h-52 overflow-hidden", wide && "md:h-auto md:w-[55%] md:shrink-0")}>
             <ProjectCover
               project={project}
               watermark
@@ -44,7 +48,12 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
               imgClassName="transition-all duration-700 group-hover:scale-110"
             />
             {project.image_url && (
-              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
+              <div
+                className={cn(
+                  "absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60",
+                  wide && "md:bg-gradient-to-l",
+                )}
+              />
             )}
 
             <div className="absolute top-4 left-4">
@@ -88,13 +97,14 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
             <h3
               className={cn(
                 "font-bold text-lg mb-2 line-clamp-2 transition-colors duration-300",
+                wide && "md:text-2xl",
                 isAcademic ? "group-hover:text-academic" : "group-hover:text-primary"
               )}
             >
               {project.titre}
             </h3>
 
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
+            <p className={cn("text-sm text-muted-foreground mb-4 flex-1", wide ? "line-clamp-4" : "line-clamp-2")}>
               {project.description_courte}
             </p>
 

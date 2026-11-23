@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { THEME_SCRIPT } from "@/lib/theme";
 
 export const metadata: Metadata = {
   title: "Ideora",
@@ -13,7 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="h-full antialiased">
+    // The theme script below adds the "dark" class before React hydrates.
+    <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <Toaster richColors position="top-right" />

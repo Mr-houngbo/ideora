@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { logout } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 
 const Header = () => {
   const pathname = usePathname();
@@ -69,12 +70,14 @@ const Header = () => {
             );
           })}
 
+          <ThemeToggle />
+
           <form action={logout}>
             <Button
               type="submit"
               variant="ghost"
               size="icon"
-              className="ml-2 text-muted-foreground hover:text-destructive"
+              className=" text-muted-foreground hover:text-destructive"
               title="Déconnexion"
             >
               <LogOut className="w-4 h-4" />
