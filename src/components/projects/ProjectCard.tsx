@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Calendar, ArrowRight, Briefcase, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import ProjectCover from "@/components/projects/ProjectCover";
 import { formatIdeaDate } from "@/lib/idea-dates";
 
 interface ProjectCardProps {
@@ -36,46 +37,18 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
           )}
         >
           <div className="relative h-52 overflow-hidden">
-            {project.image_url ? (
-              <>
-                {/* Plain <img>: images come from the login-protected /api/images route which next/image's server-side optimizer cannot fetch without the session cookie. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={project.image_url}
-                  alt={project.titre}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
-              </>
-            ) : (
-              <div
-                className="w-full h-full flex items-center justify-center"
-                style={{
-                  background: isAcademic
-                    ? "linear-gradient(135deg, hsl(var(--academic) / 0.1) 0%, hsl(var(--academic) / 0.05) 100%)"
-                    : "linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--accent) / 0.05) 100%)",
-                }}
-              >
-                <motion.div
-                  className={cn(
-                    "w-20 h-20 rounded-3xl flex items-center justify-center shadow-lg",
-                    isAcademic ? "shadow-glow-academic" : "shadow-glow"
-                  )}
-                  style={{ background: isAcademic ? "var(--gradient-academic)" : "var(--gradient-primary)" }}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <span className="text-4xl font-bold text-primary-foreground">
-                    {project.titre.charAt(0).toUpperCase()}
-                  </span>
-                </motion.div>
-              </div>
+            <ProjectCover
+              project={project}
+              watermark
+              className="h-full w-full"
+              imgClassName="transition-all duration-700 group-hover:scale-110"
+            />
+            {project.image_url && (
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
             )}
 
             <div className="absolute top-4 left-4">
-              <Badge className={cn(STATUS_COLORS[project.statut], "shadow-md backdrop-blur-sm")}>
+              <Badge className={cn(STATUS_COLORS[project.statut], "bg-white/95 shadow-md backdrop-blur-sm")}>
                 {STATUS_LABELS[project.statut]}
               </Badge>
             </div>

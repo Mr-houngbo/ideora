@@ -91,6 +91,7 @@ describe("toProjectSummary", () => {
       dateCreation: new Date("2025-06-15T10:00:00.000Z"),
       imageVersion: "abc123",
       estEspaceTravail: false,
+      accentTheme: null,
     });
 
     expect(project.image_url).toBe("/api/images/1?v=abc123");
