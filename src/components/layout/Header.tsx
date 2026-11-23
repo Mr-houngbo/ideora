@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, Briefcase, GraduationCap, History, LogOut } from "lucide-react";
+import { Sparkles, Briefcase, GraduationCap, History, FolderHeart, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { logout } from "@/actions/auth";
@@ -16,6 +16,7 @@ const Header = () => {
     { path: "/", label: "Entreprise", icon: Briefcase, color: "primary" },
     { path: "/education", label: "Académique", icon: GraduationCap, color: "academic" },
     { path: "/chronologie", label: "Chronologie", icon: History, color: "primary" },
+    { path: "/portfolio", label: "Portfolio", icon: FolderHeart, color: "primary" },
   ];
 
   return (
@@ -55,7 +56,7 @@ const Header = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{link.label}</span>
+                  <span className="hidden lg:inline">{link.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="nav-indicator"

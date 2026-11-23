@@ -7,7 +7,7 @@ const base: Project = {
   statut: "idee", horizon_temps: "long_terme", tags: [], motivation: "", ressources: "",
   date_creation: "2025-12-16T12:00:00Z", image_url: null, contenu_riche: "", accent_theme: null,
   est_espace_travail: false, workspace_data: null, custom_template: null,
-  prochaine_etape: "", prochaine_etape_date: null, a_la_une: false, mis_a_jour_le: "2025-12-16T12:00:00Z",
+  prochaine_etape: "", prochaine_etape_date: null, a_la_une: false, mis_a_jour_le: "2025-12-16T12:00:00Z", dans_portfolio: false,
 };
 
 describe("getMaturity", () => {

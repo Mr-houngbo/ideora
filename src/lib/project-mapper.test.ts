@@ -26,6 +26,7 @@ function makeRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
     prochaineEtapeDate: null,
     aLaUne: false,
     misAJourLe: new Date("2025-06-16T10:00:00.000Z"),
+    dansPortfolio: false,
     ...overrides,
   };
 }
@@ -56,6 +57,7 @@ describe("toProject", () => {
       prochaine_etape_date: null,
       a_la_une: false,
       mis_a_jour_le: "2025-06-16T10:00:00.000Z",
+      dans_portfolio: false,
     });
   });
 
@@ -105,6 +107,7 @@ describe("toProjectSummary", () => {
       prochaineEtapeDate: "2026-12-01",
       aLaUne: true,
       misAJourLe: new Date("2025-06-16T10:00:00.000Z"),
+      dansPortfolio: true,
     });
 
     expect(project.image_url).toBe("/api/images/1?v=abc123");

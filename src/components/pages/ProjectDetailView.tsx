@@ -35,6 +35,8 @@ import {
   isEducationCategory,
   type JournalEntry,
   type Project,
+  type ProjectLink,
+  type ShareLink,
 } from "@/types/project";
 import { getAccentTheme } from "@/lib/accent-themes";
 import { formatIdeaAge, formatIdeaDate } from "@/lib/idea-dates";
@@ -47,10 +49,15 @@ import { SHOWCASE_TEMPLATES } from "@/components/showcase";
 import Journal from "@/components/projects/Journal";
 import NextStep from "@/components/projects/NextStep";
 import ExportPdfButton from "@/components/projects/ExportPdfButton";
+import ProjectLinks from "@/components/projects/ProjectLinks";
+import ShareDialog from "@/components/projects/SharePanel";
 
 interface ProjectDetailViewProps {
   project: Project;
   journal?: JournalEntry[];
+  links?: ProjectLink[];
+  linkOptions?: { id: string; titre: string }[];
+  shares?: ShareLink[];
 }
 
 function IdeaDate({ iso, className }: { iso: string; className?: string }) {
@@ -146,7 +153,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{children}</h2>;
 }
 
-const ProjectDetailView = ({ project, journal = [] }: ProjectDetailViewProps) => {
+const ProjectDetailView = ({ project, journal = [], links = [], linkOptions = [], shares = [] }: ProjectDetailViewProps) => {
   const router = useRouter();
   const theme = getAccentTheme(project.accent_theme);
   const isAcademic = isEducationCategory(project.categorie);
@@ -174,6 +181,12 @@ const ProjectDetailView = ({ project, journal = [] }: ProjectDetailViewProps) =>
           <div className="container max-w-3xl py-12">
             <SectionTitle>Évolution</SectionTitle>
             <NextStep step={project.prochaine_etape} day={project.prochaine_etape_date} className="mb-6" />
+            <div data-print="hide" className="mb-8 grid gap-6 rounded-3xl border border-border bg-card p-5 sm:grid-cols-[1fr_200px]">
+              <ProjectLinks projectId={project.id} links={links} options={linkOptions} />
+              <div className="self-start">
+                <ShareDialog projectId={project.id} shares={shares} />
+              </div>
+            </div>
             <Journal projectId={project.id} entries={journal} bornAt={project.date_creation} />
           </div>
         </section>
@@ -352,6 +365,14 @@ const ProjectDetailView = ({ project, journal = [] }: ProjectDetailViewProps) =>
                     <Check className="h-3.5 w-3.5" /> Fiche complète
                   </p>
                 )}
+              </div>
+
+              <div className="border-t border-border pt-5">
+                <ProjectLinks projectId={project.id} links={links} options={linkOptions} />
+              </div>
+
+              <div data-print="hide">
+                <ShareDialog projectId={project.id} shares={shares} />
               </div>
 
               {project.est_espace_travail && (

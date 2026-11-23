@@ -25,6 +25,7 @@ function makeProject(overrides: Partial<Project> = {}): Project {
     prochaine_etape_date: null,
     a_la_une: false,
     mis_a_jour_le: "2025-01-01T00:00:00.000Z",
+    dans_portfolio: false,
     ...overrides,
   };
 }

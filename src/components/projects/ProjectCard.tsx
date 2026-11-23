@@ -16,9 +16,11 @@ interface ProjectCardProps {
   index?: number;
   /** "wide" spans two grid columns, cover beside the text (bento layout). */
   variant?: "default" | "wide";
+  /** Where the card leads; the project page by default. */
+  href?: string;
 }
 
-const ProjectCard = ({ project, index = 0, variant = "default" }: ProjectCardProps) => {
+const ProjectCard = ({ project, index = 0, variant = "default", href }: ProjectCardProps) => {
   const wide = variant === "wide";
   const isAcademic = isEducationCategory(project.categorie);
 
@@ -29,7 +31,7 @@ const ProjectCard = ({ project, index = 0, variant = "default" }: ProjectCardPro
       transition={{ duration: 0.5, delay: Math.min(index, 8) * 0.06, ease: [0.16, 1, 0.3, 1] }}
       className={cn("h-full", wide && "md:col-span-2")}
     >
-      <Link href={`/projet/${project.id}`} className="block h-full">
+      <Link href={href ?? `/projet/${project.id}`} className="block h-full">
         <Card
           hover
           className={cn(
