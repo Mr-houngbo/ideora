@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useProjectStore } from "@/store/projectStore";
 import { STATUS_LABELS, HORIZON_LABELS, CATEGORIES_ENTREPRISE, CATEGORIES_EDUCATION, ProjectStatus, TimeHorizon } from "@/types/project";
 import { cn } from "@/lib/utils";
+import { effectiveCategory } from "@/lib/filter-projects";
 
 interface ProjectFiltersProps {
   filterType?: "entreprise" | "education";
@@ -32,9 +33,15 @@ const ProjectFilters = ({ filterType = "entreprise" }: ProjectFiltersProps) => {
 
   const categoryList = filterType === "education" ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
   const categories = ["all", ...categoryList];
+  const activeCategory = effectiveCategory(filters.category, categoryList);
+  // The Académique page keeps its own turquoise accent for active filters.
+  const activeChip =
+    filterType === "education"
+      ? "bg-academic text-academic-foreground shadow-sm"
+      : "bg-primary text-primary-foreground shadow-sm";
 
   const hasActiveFilters =
-    filters.search !== "" || filters.status !== "all" || filters.category !== "all" || filters.horizon !== "all";
+    filters.search !== "" || filters.status !== "all" || activeCategory !== "all" || filters.horizon !== "all";
 
   return (
     <div className="space-y-4">
@@ -60,7 +67,7 @@ const ProjectFilters = ({ filterType = "entreprise" }: ProjectFiltersProps) => {
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
                 filters.status === status.value
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? activeChip
                   : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
               )}
             >
@@ -79,8 +86,8 @@ const ProjectFilters = ({ filterType = "entreprise" }: ProjectFiltersProps) => {
               onClick={() => setFilter("category", cat)}
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
-                filters.category === cat
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                activeCategory === cat
+                  ? activeChip
                   : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
               )}
             >
@@ -100,7 +107,7 @@ const ProjectFilters = ({ filterType = "entreprise" }: ProjectFiltersProps) => {
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
                 filters.horizon === horizon.value
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? activeChip
                   : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
               )}
             >

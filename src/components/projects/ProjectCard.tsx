@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Calendar, ArrowRight, Briefcase, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { formatIdeaDate } from "@/lib/idea-dates";
 
 interface ProjectCardProps {
   project: Project;
@@ -140,7 +141,9 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
             <div className="flex items-center justify-between pt-4 border-t border-border/50">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Calendar className="w-3.5 h-3.5" />
-                <span>{new Date(project.date_creation).toLocaleDateString("fr-FR")}</span>
+                <time dateTime={project.date_creation} title="Date de l’idée">
+                  {formatIdeaDate(project.date_creation, { short: true })}
+                </time>
               </div>
 
               <motion.span

@@ -7,6 +7,7 @@ import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { toProject } from "@/lib/projects";
 import { projectFormSchema, type ProjectFormValues } from "@/lib/validations/project";
+import { dayToTimestamp, toDayString } from "@/lib/idea-dates";
 import type { Project } from "@/types/project";
 
 function toRow(data: ProjectFormValues) {
@@ -40,9 +41,16 @@ export async function createProject(formData: ProjectFormValues, imageFile?: Fil
       ? { imageData: await fileToBase64(imageFile), imageMimeType: imageFile.type || "application/octet-stream" }
       : {};
 
+  // Today keeps the real creation time; an earlier day records when the idea
+  // actually came (e.g. back-filling an idea noted on paper).
+  const dateColumns =
+    data.date_idee && data.date_idee !== toDayString(new Date())
+      ? { dateCreation: dayToTimestamp(data.date_idee) }
+      : {};
+
   const [row] = await db
     .insert(projects)
-    .values({ ...toRow(data), ...imageColumns })
+    .values({ ...toRow(data), ...imageColumns, ...dateColumns })
     .returning();
 
   revalidatePath("/");
@@ -63,9 +71,19 @@ export async function updateProject(id: string, formData: ProjectFormValues, ima
     imageColumns = { imageData: null, imageMimeType: null };
   }
 
+  let dateColumns: { dateCreation?: Date } = {};
+  if (data.date_idee) {
+    const [current] = await db
+      .select({ dateCreation: projects.dateCreation })
+      .from(projects)
+      .where(eq(projects.id, id))
+      .limit(1);
+    if (current) dateColumns = { dateCreation: dayToTimestamp(data.date_idee, current.dateCreation) };
+  }
+
   const [row] = await db
     .update(projects)
-    .set({ ...toRow(data), ...imageColumns })
+    .set({ ...toRow(data), ...imageColumns, ...dateColumns })
     .where(eq(projects.id, id))
     .returning();
 

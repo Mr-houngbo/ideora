@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isDayString } from "@/lib/idea-dates";
 
 export const projectFormSchema = z.object({
   titre: z.string().trim().min(1, "Le titre est requis"),
@@ -14,6 +15,13 @@ export const projectFormSchema = z.object({
   contenu_riche: z.string().trim().default(""),
   accent_theme: z.string().nullable().default(null),
   est_espace_travail: z.boolean().default(false),
+  // The day the idea came. Optional so older clients and scripts keep working;
+  // when absent, a new project is dated now and an edit keeps its date.
+  date_idee: z
+    .string()
+    .refine(isDayString, "Date invalide")
+    .refine((d) => d <= new Date(Date.now() + 86_400_000).toISOString().slice(0, 10), "La date ne peut pas être dans le futur")
+    .optional(),
 });
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;
