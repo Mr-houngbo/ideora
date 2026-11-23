@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterProjects } from "@/lib/filter-projects";
+import { effectiveCategory, filterProjects } from "@/lib/filter-projects";
 import type { Project } from "@/types/project";
 
 function makeProject(overrides: Partial<Project> = {}): Project {
@@ -75,5 +75,13 @@ describe("filterProjects", () => {
     const result = filterProjects(projects, { ...baseFilters, search: "match", status: "en_cours" });
     expect(result).toHaveLength(1);
     expect(result[0].statut).toBe("en_cours");
+  });
+});
+
+describe("effectiveCategory", () => {
+  it("ignores a category picked on the other page", () => {
+    expect(effectiveCategory("Master", ["Tech", "Business"])).toBe("all");
+    expect(effectiveCategory("Tech", ["Tech", "Business"])).toBe("Tech");
+    expect(effectiveCategory("all", ["Tech"])).toBe("all");
   });
 });

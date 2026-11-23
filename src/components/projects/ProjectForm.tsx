@@ -3,7 +3,8 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Image as ImageIcon, Loader2, Save, ArrowLeft, Briefcase, GraduationCap, Sparkles, Check } from "lucide-react";
+import { X, Image as ImageIcon, Loader2, Save, ArrowLeft, Briefcase, GraduationCap, Sparkles, Check, CalendarHeart } from "lucide-react";
+import { toDayString } from "@/lib/idea-dates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,6 +67,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
     contenu_riche: initialData?.contenu_riche || "",
     accent_theme: initialData?.accent_theme || null,
     est_espace_travail: initialData?.est_espace_travail || false,
+    date_idee: toDayString(initialData?.date_creation ?? new Date()),
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -82,7 +84,12 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
     );
   };
 
-  const currentCategories = projectType === "academique" ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
+  const baseCategories = projectType === "academique" ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
+  // A project saved under a category no longer in the list must still show it.
+  const currentCategories =
+    formData.categorie && !baseCategories.includes(formData.categorie)
+      ? [...baseCategories, formData.categorie]
+      : baseCategories;
 
   const handleChange = (field: keyof ProjectFormData, value: string | boolean | string[] | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -286,6 +293,24 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
               placeholder="Mon projet ambitieux..."
               className="h-12 text-base"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="date_idee" className="font-semibold flex items-center gap-2">
+              <CalendarHeart className="w-4 h-4 text-primary" />
+              Date de l’idée
+            </Label>
+            <Input
+              id="date_idee"
+              type="date"
+              value={formData.date_idee}
+              max={toDayString(new Date())}
+              onChange={(e) => handleChange("date_idee", e.target.value)}
+              className="h-12 text-base w-full md:w-64"
+            />
+            <p className="text-xs text-muted-foreground">
+              Le jour où cette idée t’est venue. C’est elle qui place le projet dans le fil de ta pensée.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

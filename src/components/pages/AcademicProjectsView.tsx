@@ -8,7 +8,7 @@ import ProjectFilters from "@/components/projects/ProjectFilters";
 import FloatingAddButton from "@/components/projects/FloatingAddButton";
 import { useProjectStore } from "@/store/projectStore";
 import { filterProjects } from "@/lib/filter-projects";
-import { isEducationCategory, type Project } from "@/types/project";
+import { isEducationCategory, type Project, CATEGORIES_EDUCATION } from "@/types/project";
 
 interface AcademicProjectsViewProps {
   projects: Project[];
@@ -18,7 +18,7 @@ const AcademicProjectsView = ({ projects }: AcademicProjectsViewProps) => {
   const { filters } = useProjectStore();
 
   const academicProjects = projects.filter((p) => isEducationCategory(p.categorie));
-  const filteredProjects = filterProjects(academicProjects, filters);
+  const filteredProjects = filterProjects(academicProjects, filters, CATEGORIES_EDUCATION);
 
   const totalAcademic = academicProjects.length;
   const enCours = academicProjects.filter((p) => p.statut === "en_cours").length;
@@ -60,7 +60,7 @@ const AcademicProjectsView = ({ projects }: AcademicProjectsViewProps) => {
             <span className="text-academic-foreground">Parcours Académique</span>
           </motion.div>
 
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-balance">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-balance break-words hyphens-auto">
             Vos <span className="gradient-text-academic">objectifs</span>
             <br />
             académiques

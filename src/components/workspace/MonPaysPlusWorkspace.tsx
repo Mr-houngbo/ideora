@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { updateProjectWorkspace } from "@/actions/workspace";
 import type { WorkspaceStore as Store } from "@/types/workspace";
-import { Style, Sidebar } from "./monpaysplus/shared";
+import { Style, Sidebar, MobileNav } from "./monpaysplus/shared";
 import type { Tab } from "./monpaysplus/shared";
 import { DashboardView } from "./monpaysplus/DashboardView";
 import { InitiativesView } from "./monpaysplus/InitiativesView";
@@ -49,8 +49,9 @@ export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPay
   return (
     <div className="min-h-screen" style={{ background: "var(--mpp-surface)" }}>
       <Style />
+      <MobileNav tab={tab} onChange={setTab} backHref={`/projet/${projectId}`} />
       <div className="flex">
-        <Sidebar tab={tab} onChange={setTab} store={store} />
+        <Sidebar tab={tab} onChange={setTab} store={store} backHref={`/projet/${projectId}`} />
         <main className="flex-1 min-h-screen p-6 md:p-10 lg:pl-12 overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div

@@ -23,7 +23,10 @@ export interface Project {
   custom_template: string | null;
 }
 
-export type ProjectFormData = Omit<Project, 'id' | 'date_creation' | 'workspace_data' | 'custom_template'>;
+export type ProjectFormData = Omit<Project, 'id' | 'date_creation' | 'workspace_data' | 'custom_template'> & {
+  /** Day the idea was first recorded, as YYYY-MM-DD. */
+  date_idee: string;
+};
 
 export const STATUS_LABELS: Record<ProjectStatus, string> = {
   idee: 'Idée',
@@ -60,6 +63,7 @@ export const CATEGORIES_ENTREPRISE = [
   'Personnel',
   'Santé',
   'Social',
+  'Éducation',
   'Autre',
 ];
 

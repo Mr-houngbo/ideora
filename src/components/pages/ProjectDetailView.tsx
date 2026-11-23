@@ -25,6 +25,7 @@ import { STATUS_LABELS, STATUS_COLORS, HORIZON_LABELS, HORIZON_COLORS, Project }
 import { getAccentTheme } from "@/lib/accent-themes";
 import RichMarkdown from "@/components/projects/RichMarkdown";
 import { cn } from "@/lib/utils";
+import { formatIdeaAge, formatIdeaDate } from "@/lib/idea-dates";
 import Header from "@/components/layout/Header";
 import { SHOWCASE_TEMPLATES } from "@/components/showcase";
 
@@ -158,7 +159,8 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
         </div>
 
         <div className={cn("container py-8 -mt-16 relative z-10", isRich ? "max-w-5xl" : "max-w-4xl")}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          {/* No fade-in from opacity 0: the content shows as soon as the HTML arrives. */}
+          <motion.div initial={{ y: 12 }} animate={{ y: 0 }} transition={{ duration: 0.4 }}>
             <Card className="p-8 mb-8">
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <Badge className={STATUS_COLORS[project.statut]}>{STATUS_LABELS[project.statut]}</Badge>
@@ -191,12 +193,11 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="w-4 h-4" />
                   <span>
-                    Créé le{" "}
-                    {new Date(project.date_creation).toLocaleDateString("fr-FR", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
+                    Idée née le{" "}
+                    <time dateTime={project.date_creation} className="font-semibold text-foreground">
+                      {formatIdeaDate(project.date_creation)}
+                    </time>
+                    <span className="opacity-70" suppressHydrationWarning> · {formatIdeaAge(project.date_creation)}</span>
                   </span>
                 </div>
 
@@ -221,23 +222,6 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
                 </div>
                 <p className="text-muted-foreground whitespace-pre-line">{project.description_detaillee}</p>
               </Card>
-            )}
-
-            {project.contenu_riche && (
-              <div className="mb-6 overflow-hidden rounded-3xl relative">
-                <div
-                  className="absolute inset-0"
-                  style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.via}, ${theme.to})` }}
-                />
-                <div className="absolute inset-0 bg-black/10" />
-                <div className="relative z-10 px-8 py-14 md:py-20 text-center">
-                  <p className="text-xs uppercase tracking-[0.3em] text-white/70 mb-4">{project.horizon_temps && HORIZON_LABELS[project.horizon_temps]}</p>
-                  <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.titre}</h2>
-                  {project.description_courte && (
-                    <p className="text-white/90 text-base md:text-lg max-w-2xl mx-auto italic">{project.description_courte}</p>
-                  )}
-                </div>
-              </div>
             )}
 
             {project.contenu_riche && (

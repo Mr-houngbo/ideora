@@ -1,6 +1,7 @@
 "use client";
 
-import { type LucideIcon, LayoutDashboard, Lightbulb, Layers, Users, Map, BookOpen, NotebookPen, Mic2, Search } from "lucide-react";
+import Link from "next/link";
+import { type LucideIcon, ArrowLeft, LayoutDashboard, Lightbulb, Layers, Users, Map, BookOpen, NotebookPen, Mic2, Search } from "lucide-react";
 import type { WorkspaceStore as Store } from "@/types/workspace";
 
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -63,8 +64,8 @@ export function Style() {
 
 /* ───────────────────────── Sidebar ───────────────────────── */
 export function Sidebar({
-  tab, onChange, store,
-}: { tab: Tab; onChange: (t: Tab) => void; store: Store }) {
+  tab, onChange, store, backHref,
+}: { tab: Tab; onChange: (t: Tab) => void; store: Store; backHref: string }) {
   const counts: Record<string, number> = {
     initiatives: store.initiatives.length,
     domains: store.domains.length,
@@ -79,6 +80,12 @@ export function Sidebar({
       className="hidden md:flex flex-col w-64 shrink-0 min-h-screen p-5 gap-1 sticky top-0"
       style={{ background: "var(--mpp-primary-dark)", color: "#F0E8DC" }}
     >
+      <Link
+        href={backHref}
+        className="mb-5 inline-flex items-center gap-1.5 text-xs opacity-70 hover:opacity-100 transition-opacity"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" /> Retour à la fiche Ideora
+      </Link>
       <div className="mb-6">
         <div className="mpp-sub text-2xl" style={{ color: "var(--mpp-accent)" }}>
           MonPays<span style={{ color: "#fff" }}>+</span>
@@ -119,7 +126,7 @@ export function Sidebar({
       })}
 
       <div className="mt-auto pt-4 border-t border-white/10 text-[11px] opacity-60">
-        Données stockées localement.<br />Phase 1 — Solo.
+        Enregistré automatiquement dans Ideora.<br />Phase 1 — Solo.
       </div>
     </aside>
   );
@@ -172,6 +179,46 @@ export function Stat({ label, value, hint }: { label: string; value: React.React
         {value}
       </div>
       {hint && <div className="text-xs mt-1" style={{ color: "var(--mpp-text-2)" }}>{hint}</div>}
+    </div>
+  );
+}
+
+/** Top bar shown below the md breakpoint, where the sidebar is hidden. */
+export function MobileNav({
+  tab, onChange, backHref,
+}: { tab: Tab; onChange: (t: Tab) => void; backHref: string }) {
+  return (
+    <div
+      className="md:hidden sticky top-0 z-30"
+      style={{ background: "var(--mpp-primary-dark)", color: "#F0E8DC" }}
+    >
+      <div className="flex items-center justify-between px-4 pt-3">
+        <Link href={backHref} className="inline-flex items-center gap-1.5 text-xs opacity-80">
+          <ArrowLeft className="h-3.5 w-3.5" /> Ideora
+        </Link>
+        <div className="mpp-sub text-lg" style={{ color: "var(--mpp-accent)" }}>
+          MonPays<span style={{ color: "#fff" }}>+</span>
+        </div>
+      </div>
+      <nav className="flex gap-1 overflow-x-auto px-3 py-2.5 [scrollbar-width:none]">
+        {NAV.map(({ id, label, icon: Icon }) => {
+          const active = tab === id;
+          return (
+            <button
+              key={id}
+              onClick={() => onChange(id)}
+              className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs transition-colors"
+              style={{
+                background: active ? "var(--mpp-accent)" : "rgba(255,255,255,0.08)",
+                color: active ? "var(--mpp-primary-dark)" : "#F0E8DC",
+              }}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {label}
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 }

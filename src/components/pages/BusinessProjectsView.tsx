@@ -8,7 +8,7 @@ import ProjectFilters from "@/components/projects/ProjectFilters";
 import FloatingAddButton from "@/components/projects/FloatingAddButton";
 import { useProjectStore } from "@/store/projectStore";
 import { filterProjects } from "@/lib/filter-projects";
-import { isEducationCategory, type Project } from "@/types/project";
+import { isEducationCategory, type Project, CATEGORIES_ENTREPRISE } from "@/types/project";
 
 interface BusinessProjectsViewProps {
   projects: Project[];
@@ -18,7 +18,7 @@ const BusinessProjectsView = ({ projects }: BusinessProjectsViewProps) => {
   const { filters } = useProjectStore();
 
   const enterpriseProjects = projects.filter((p) => !isEducationCategory(p.categorie));
-  const filteredProjects = filterProjects(enterpriseProjects, filters);
+  const filteredProjects = filterProjects(enterpriseProjects, filters, CATEGORIES_ENTREPRISE);
 
   const totalEntreprise = enterpriseProjects.length;
   const enCours = enterpriseProjects.filter((p) => p.statut === "en_cours").length;
@@ -48,7 +48,7 @@ const BusinessProjectsView = ({ projects }: BusinessProjectsViewProps) => {
             <span className="text-primary-foreground">Idées Business</span>
           </motion.div>
 
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-balance">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-balance break-words hyphens-auto">
             Vos <span className="gradient-text">ambitions</span>
             <br />
             entrepreneuriales
