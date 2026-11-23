@@ -213,7 +213,7 @@ function MilestoneDialog({
             </div>
             <div>
               <Label>Statut</Label>
-              <Select value={m.status} onValueChange={(v: any) => setM({ ...m, status: v })}>
+              <Select value={m.status} onValueChange={(v) => setM({ ...m, status: v as Milestone["status"] })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {Object.entries(milestoneStatusLabel).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}

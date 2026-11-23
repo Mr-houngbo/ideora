@@ -45,7 +45,7 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
         description: "Le projet a été supprimé définitivement.",
       });
       router.push("/");
-    } catch (error) {
+    } catch {
       toast.error("Erreur", {
         description: "Impossible de supprimer le projet.",
       });
@@ -103,6 +103,9 @@ const ProjectDetailView = ({ project }: ProjectDetailViewProps) => {
           style={!project.image_url && isRich ? { background: `linear-gradient(135deg, ${theme.from}, ${theme.via}, ${theme.to})` } : undefined}
         >
           {project.image_url ? (
+            // Plain <img>: images come from the login-protected /api/images route, which
+            // next/image's server-side optimizer cannot fetch without the session cookie.
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={project.image_url} alt={project.titre} className="w-full h-full object-cover" />
           ) : isRich ? (
             <div className="w-full h-full flex flex-col items-center justify-center text-center px-6">

@@ -124,12 +124,15 @@ export function LibraryView({ store, onChange }: { store: Store; onChange: (v: L
 function LibraryDialog({
   open, onOpenChange, initial, domains, onSave,
 }: { open: boolean; onOpenChange: (v: boolean) => void; initial: LibraryItem | null; domains: Domain[]; onSave: (x: LibraryItem) => void }) {
-  const blank: LibraryItem = {
+  // A factory, not a constant: ids and timestamps must be fresh for each new item.
+  const makeBlank = (): LibraryItem => ({
     id: uid(), title: "", author: "", type: "book", domainId: domains[0]?.id || "",
     url: "", summary: "", lessons: "", rating: 0, isRead: false, createdAt: Date.now(),
-  };
-  const [x, setX] = useState<LibraryItem>(initial || blank);
-  useEffect(() => { setX(initial || { ...blank, id: uid(), createdAt: Date.now() }); /* eslint-disable-line */ }, [initial, open]);
+  });
+  const [x, setX] = useState<LibraryItem>(() => initial || makeBlank());
+  // Reset the form each time the dialog opens or switches item.
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { setX(initial || makeBlank()); }, [initial, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -143,7 +146,7 @@ function LibraryDialog({
             <div><Label>Auteur</Label><Input value={x.author} onChange={(e) => setX({ ...x, author: e.target.value })} /></div>
             <div>
               <Label>Type</Label>
-              <Select value={x.type} onValueChange={(v: any) => setX({ ...x, type: v })}>
+              <Select value={x.type} onValueChange={(v) => setX({ ...x, type: v as LibraryItem["type"] })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {["book","article","report","video","podcast","documentary","other"].map((t) =>

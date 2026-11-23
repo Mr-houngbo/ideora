@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Lightbulb, Layers, Users, Map, BookOpen, NotebookPen, Mic2, Search } from "lucide-react";
+import { type LucideIcon, LayoutDashboard, Lightbulb, Layers, Users, Map, BookOpen, NotebookPen, Mic2, Search } from "lucide-react";
 import type { WorkspaceStore as Store } from "@/types/workspace";
 
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -146,7 +146,7 @@ export function PageHeader({
 
 export function EmptyState({
   icon: Icon, title, hint, action,
-}: { icon: any; title: string; hint: string; action?: React.ReactNode }) {
+}: { icon: LucideIcon; title: string; hint: string; action?: React.ReactNode }) {
   return (
     <div className="mpp-card p-12 text-center">
       <div

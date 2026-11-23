@@ -92,12 +92,15 @@ export function ConferenceView({ store, onChange }: { store: Store; onChange: (v
 function SessionDialog({
   open, onOpenChange, initial, domains, onSave,
 }: { open: boolean; onOpenChange: (v: boolean) => void; initial: ConferenceSession | null; domains: Domain[]; onSave: (s: ConferenceSession) => void }) {
-  const blank: ConferenceSession = {
+  // A factory, not a constant: ids and timestamps must be fresh for each new item.
+  const makeBlank = (): ConferenceSession => ({
     id: uid(), title: "", description: "", type: "presentation", duration: 30,
     domainId: domains[0]?.id || "", status: "idea", speakerIds: [],
-  };
-  const [s, setS] = useState<ConferenceSession>(initial || blank);
-  useEffect(() => { setS(initial || { ...blank, id: uid() }); /* eslint-disable-line */ }, [initial, open]);
+  });
+  const [s, setS] = useState<ConferenceSession>(() => initial || makeBlank());
+  // Reset the form each time the dialog opens or switches item.
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { setS(initial || makeBlank()); }, [initial, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -111,7 +114,7 @@ function SessionDialog({
           <div className="grid grid-cols-3 gap-3">
             <div>
               <Label>Type</Label>
-              <Select value={s.type} onValueChange={(v: any) => setS({ ...s, type: v })}>
+              <Select value={s.type} onValueChange={(v) => setS({ ...s, type: v as ConferenceSession["type"] })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {["keynote","panel","workshop","presentation"].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
@@ -124,7 +127,7 @@ function SessionDialog({
             </div>
             <div>
               <Label>Statut</Label>
-              <Select value={s.status} onValueChange={(v: any) => setS({ ...s, status: v })}>
+              <Select value={s.status} onValueChange={(v) => setS({ ...s, status: v as ConferenceSession["status"] })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {["idea","confirmed","finalized"].map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}

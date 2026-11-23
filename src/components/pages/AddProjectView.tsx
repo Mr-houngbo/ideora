@@ -27,7 +27,7 @@ const AddProjectView = ({ defaultCategory }: AddProjectViewProps) => {
       });
 
       router.push(isEducationCategory(data.categorie) ? "/education" : "/");
-    } catch (error) {
+    } catch {
       toast.error("Erreur", {
         description: "Impossible de créer le projet.",
       });

@@ -37,6 +37,8 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
           <div className="relative h-52 overflow-hidden">
             {project.image_url ? (
               <>
+                {/* Plain <img>: images come from the login-protected /api/images route which next/image's server-side optimizer cannot fetch without the session cookie. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={project.image_url}
                   alt={project.titre}

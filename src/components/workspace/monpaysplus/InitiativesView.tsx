@@ -191,14 +191,17 @@ function InitiativeDialog({
   initial: Initiative | null; domains: Domain[];
   onSave: (i: Initiative) => void;
 }) {
-  const blank: Initiative = {
+  // A factory, not a constant: ids and timestamps must be fresh for each new item.
+  const makeBlank = (): Initiative => ({
     id: uid(), title: "", domainId: domains[0]?.id || "", country: "", countryCode: "",
     description: "", mechanism: "", conditions: "", obstacles: "",
     feasibility: 5, adaptation: "", cost: "medium", timelineYears: 3,
     status: "draft", pinned: false, sources: [], tags: [], createdAt: Date.now(),
-  };
-  const [data, setData] = useState<Initiative>(initial || blank);
-  useEffect(() => { setData(initial || { ...blank, id: uid(), createdAt: Date.now() }); /* eslint-disable-line */ }, [initial, open]);
+  });
+  const [data, setData] = useState<Initiative>(() => initial || makeBlank());
+  // Reset the form each time the dialog opens or switches item.
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { setData(initial || makeBlank()); }, [initial, open]);
 
   const set = <K extends keyof Initiative>(k: K, v: Initiative[K]) =>
     setData((d) => ({ ...d, [k]: v }));
@@ -211,7 +214,7 @@ function InitiativeDialog({
             {initial ? "Modifier l'initiative" : "Nouvelle initiative"}
           </DialogTitle>
           <DialogDescription>
-            Documente précisément. Le détail aujourd'hui = la crédibilité demain.
+            Documente précisément. Le détail aujourd’hui = la crédibilité demain.
           </DialogDescription>
         </DialogHeader>
 
@@ -234,7 +237,7 @@ function InitiativeDialog({
               </Select>
             </div>
             <div>
-              <Label>Pays d'origine</Label>
+              <Label>Pays d’origine</Label>
               <Input value={data.country} onChange={(e) => set("country", e.target.value)}
                 placeholder="ex: Finlande" />
             </div>
@@ -269,7 +272,7 @@ function InitiativeDialog({
           </div>
 
           <div>
-            <Label>Notes d'adaptation au Bénin</Label>
+            <Label>Notes d’adaptation au Bénin</Label>
             <Textarea rows={3} value={data.adaptation} onChange={(e) => set("adaptation", e.target.value)}
               placeholder="Qu'est-ce qu'il faut changer pour notre contexte ?" />
           </div>
@@ -283,7 +286,7 @@ function InitiativeDialog({
             </div>
             <div>
               <Label>Coût estimé</Label>
-              <Select value={data.cost} onValueChange={(v: any) => set("cost", v)}>
+              <Select value={data.cost} onValueChange={(v) => set("cost", v as Initiative["cost"])}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {Object.entries(costLabel).map(([k, v]) => (
@@ -300,7 +303,7 @@ function InitiativeDialog({
             </div>
             <div>
               <Label>Statut</Label>
-              <Select value={data.status} onValueChange={(v: any) => set("status", v)}>
+              <Select value={data.status} onValueChange={(v) => set("status", v as Initiative["status"])}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {Object.entries(statusLabel).map(([k, v]) => (

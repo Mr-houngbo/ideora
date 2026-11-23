@@ -27,7 +27,7 @@ const EditProjectView = ({ project }: EditProjectViewProps) => {
       });
 
       router.push(`/projet/${project.id}`);
-    } catch (error) {
+    } catch {
       toast.error("Erreur", {
         description: "Impossible de mettre à jour le projet.",
       });

@@ -130,7 +130,7 @@ export function DashboardView({ store, onJump }: { store: Store; onJump: (t: Tab
           </div>
           {pinned.length === 0 ? (
             <p className="text-sm" style={{ color: "var(--mpp-text-2)" }}>
-              Épingle des initiatives clés depuis l'onglet Initiatives.
+              Épingle des initiatives clés depuis l’onglet Initiatives.
             </p>
           ) : (
             <div className="space-y-2">
@@ -186,8 +186,8 @@ export function DashboardView({ store, onJump }: { store: Store; onJump: (t: Tab
           ✦ Pensée du jour
         </div>
         <p className="mpp-h text-xl md:text-2xl mt-2 max-w-3xl" style={{ color: "#FAF6F1" }}>
-          « Aucun pays ne s'est jamais développé en imitant aveuglément.
-          Il s'agit d'observer, comprendre, adapter — patiemment. »
+          « Aucun pays ne s’est jamais développé en imitant aveuglément.
+          Il s’agit d’observer, comprendre, adapter — patiemment. »
         </p>
       </div>
     </>

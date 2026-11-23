@@ -102,11 +102,14 @@ export function JournalView({ store, onChange }: { store: Store; onChange: (v: J
 function JournalDialog({
   open, onOpenChange, initial, onSave,
 }: { open: boolean; onOpenChange: (v: boolean) => void; initial: JournalEntry | null; onSave: (e: JournalEntry) => void }) {
-  const blank: JournalEntry = {
+  // A factory, not a constant: ids and timestamps must be fresh for each new item.
+  const makeBlank = (): JournalEntry => ({
     id: uid(), title: "", content: "", mood: "reflective", tags: "", createdAt: Date.now(),
-  };
-  const [e, setE] = useState<JournalEntry>(initial || blank);
-  useEffect(() => { setE(initial || { ...blank, id: uid(), createdAt: Date.now() }); /* eslint-disable-line */ }, [initial, open]);
+  });
+  const [e, setE] = useState<JournalEntry>(() => initial || makeBlank());
+  // Reset the form each time the dialog opens or switches item.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setE(initial || makeBlank()); }, [initial, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -118,7 +121,7 @@ function JournalDialog({
           <div><Label>Titre</Label><Input value={e.title} onChange={(ev) => setE({ ...e, title: ev.target.value })} /></div>
           <div>
             <Label>Humeur</Label>
-            <Select value={e.mood} onValueChange={(v: any) => setE({ ...e, mood: v })}>
+            <Select value={e.mood} onValueChange={(v) => setE({ ...e, mood: v as JournalEntry["mood"] })}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 {["motivated","reflective","doubtful","energized","focused"].map((m) =>

@@ -28,11 +28,7 @@ export function useCountUp(target: number, start: boolean, duration = 1400) {
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!start) return;
-    if (reduceMotion) {
-      setValue(target);
-      return;
-    }
+    if (!start || reduceMotion) return;
     let raf = 0;
     const t0 = performance.now();
     const tick = (t: number) => {
@@ -45,13 +41,16 @@ export function useCountUp(target: number, start: boolean, duration = 1400) {
     return () => cancelAnimationFrame(raf);
   }, [target, duration, start, reduceMotion]);
 
-  return value;
+  // With reduced motion, jump straight to the final number instead of animating.
+  return start && reduceMotion ? target : value;
 }
 
 export function useCountdownDays(sinceIso: string) {
   const [days, setDays] = useState(0);
   useEffect(() => {
     const since = new Date(sinceIso).getTime();
+    // After mount on purpose: "now" differs between server and client.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDays(Math.max(0, Math.floor((Date.now() - since) / (1000 * 60 * 60 * 24))));
   }, [sinceIso]);
   return days;

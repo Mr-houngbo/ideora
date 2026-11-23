@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import type { WorkspaceStore as Store, Initiative, Contact } from "@/types/workspace";
+import type { WorkspaceStore as Store } from "@/types/workspace";
 import { fmt, PageHeader, EmptyState } from "./shared";
 import type { Tab } from "./shared";
 

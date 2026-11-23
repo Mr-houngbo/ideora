@@ -110,12 +110,15 @@ export function NetworkView({
 function ContactDialog({
   open, onOpenChange, initial, onSave,
 }: { open: boolean; onOpenChange: (v: boolean) => void; initial: Contact | null; onSave: (c: Contact) => void }) {
-  const blank: Contact = {
+  // A factory, not a constant: ids and timestamps must be fresh for each new item.
+  const makeBlank = (): Contact => ({
     id: uid(), name: "", role: "", expertise: "", country: "",
     email: "", linkedin: "", relationship: "identified", potential: 3, notes: "", createdAt: Date.now(),
-  };
-  const [c, setC] = useState<Contact>(initial || blank);
-  useEffect(() => { setC(initial || { ...blank, id: uid(), createdAt: Date.now() }); /* eslint-disable-line */ }, [initial, open]);
+  });
+  const [c, setC] = useState<Contact>(() => initial || makeBlank());
+  // Reset the form each time the dialog opens or switches item.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setC(initial || makeBlank()); }, [initial, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -133,7 +136,7 @@ function ContactDialog({
             <div><Label>Pays</Label><Input value={c.country} onChange={(e) => setC({ ...c, country: e.target.value })} /></div>
             <div>
               <Label>Relation</Label>
-              <Select value={c.relationship} onValueChange={(v: any) => setC({ ...c, relationship: v })}>
+              <Select value={c.relationship} onValueChange={(v) => setC({ ...c, relationship: v as Contact["relationship"] })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {Object.entries(relLabel).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
