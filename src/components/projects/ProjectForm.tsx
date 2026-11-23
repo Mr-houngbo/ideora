@@ -71,6 +71,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
     prochaine_etape: initialData?.prochaine_etape || "",
     prochaine_etape_date: initialData?.prochaine_etape_date || null,
     a_la_une: initialData?.a_la_une || false,
+    dans_portfolio: initialData?.dans_portfolio || false,
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -554,6 +555,19 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
             />
             <Label htmlFor="a_la_une" className="cursor-pointer font-medium">
               Mettre ce projet à la une de l&apos;accueil (remplace celui qui y est)
+            </Label>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="dans_portfolio"
+              checked={formData.dans_portfolio}
+              onChange={(e) => handleChange("dans_portfolio", e.target.checked)}
+              className="w-5 h-5 rounded-lg border-border text-primary focus:ring-primary cursor-pointer"
+            />
+            <Label htmlFor="dans_portfolio" className="cursor-pointer font-medium">
+              Inclure dans le portfolio partagé
             </Label>
           </div>
         </Card>

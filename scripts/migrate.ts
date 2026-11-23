@@ -23,6 +23,27 @@ const STATEMENTS = [
      ecrit_le timestamptz NOT NULL DEFAULT now()
    )`,
   `CREATE INDEX IF NOT EXISTS journal_project_idx ON journal (project_id, ecrit_le)`,
+  // Lot 5: links between ideas, private share links, portfolio selection.
+  `ALTER TABLE projects ADD COLUMN IF NOT EXISTS dans_portfolio boolean NOT NULL DEFAULT false`,
+  `CREATE TABLE IF NOT EXISTS liens (
+     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+     source_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+     cible_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+     type text NOT NULL,
+     note text,
+     cree_le timestamptz NOT NULL DEFAULT now()
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS liens_pair_idx ON liens (source_id, cible_id)`,
+  `CREATE TABLE IF NOT EXISTS partages (
+     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+     token text NOT NULL UNIQUE,
+     project_id uuid REFERENCES projects(id) ON DELETE CASCADE,
+     libelle text,
+     cree_le timestamptz NOT NULL DEFAULT now(),
+     expire_le timestamptz,
+     revoque_le timestamptz,
+     vues integer NOT NULL DEFAULT 0
+   )`,
 ];
 
 async function main() {

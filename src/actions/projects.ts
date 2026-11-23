@@ -28,6 +28,7 @@ function toRow(data: ProjectFormValues) {
     prochaineEtape: data.prochaine_etape || null,
     prochaineEtapeDate: data.prochaine_etape ? data.prochaine_etape_date : null,
     aLaUne: data.a_la_une,
+    dansPortfolio: data.dans_portfolio,
     misAJourLe: new Date(),
   };
 }

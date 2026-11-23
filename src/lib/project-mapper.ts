@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import type { JournalRow, ProjectRow } from "@/db/schema";
-import type { JournalEntry, Project } from "@/types/project";
+import type { JournalRow, PartageRow, ProjectRow } from "@/db/schema";
+import type { JournalEntry, Project, ShareLink } from "@/types/project";
 
 /** Short content fingerprint of the stored base64 image, used to bust the HTTP cache when it changes. */
 export function imageVersionOf(imageData: string): string {
@@ -40,6 +40,20 @@ export function toProject(row: ProjectRow): Project {
     prochaine_etape_date: row.prochaineEtapeDate ?? null,
     a_la_une: row.aLaUne,
     mis_a_jour_le: row.misAJourLe.toISOString(),
+    dans_portfolio: row.dansPortfolio,
+  };
+}
+
+export function toShareLink(row: PartageRow): ShareLink {
+  return {
+    id: row.id,
+    token: row.token,
+    project_id: row.projectId ?? null,
+    libelle: row.libelle ?? "",
+    cree_le: row.creeLe.toISOString(),
+    expire_le: row.expireLe ? row.expireLe.toISOString() : null,
+    revoque_le: row.revoqueLe ? row.revoqueLe.toISOString() : null,
+    vues: row.vues,
   };
 }
 
@@ -73,6 +87,7 @@ export interface ProjectSummaryRow {
   prochaineEtapeDate: string | null;
   aLaUne: boolean;
   misAJourLe: Date;
+  dansPortfolio: boolean;
 }
 
 /**
@@ -104,5 +119,6 @@ export function toProjectSummary(row: ProjectSummaryRow): Project {
     prochaine_etape_date: row.prochaineEtapeDate ?? null,
     a_la_une: row.aLaUne,
     mis_a_jour_le: row.misAJourLe.toISOString(),
+    dans_portfolio: row.dansPortfolio,
   };
 }

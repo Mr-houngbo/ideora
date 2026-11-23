@@ -28,6 +28,38 @@ export interface Project {
   /** Picked by hand for the home page "À la une". */
   a_la_une: boolean;
   mis_a_jour_le: string;
+  /** Shown in the shared portfolio. */
+  dans_portfolio: boolean;
+}
+
+export type LinkType = 'inspire' | 'variante' | 'prolonge' | 'lie';
+
+/** How a link reads from the project it starts from, and from the other end. */
+export const LINK_LABELS: Record<LinkType, { out: string; in: string }> = {
+  inspire: { out: 'Inspiré de', in: 'A inspiré' },
+  variante: { out: 'Variante de', in: 'A pour variante' },
+  prolonge: { out: 'Prolonge', in: 'Prolongé par' },
+  lie: { out: 'Lié à', in: 'Lié à' },
+};
+
+export interface ProjectLink {
+  id: string;
+  type: LinkType;
+  note: string;
+  /** "out": this project is the source of the link. */
+  direction: 'out' | 'in';
+  other: Pick<Project, 'id' | 'titre' | 'categorie' | 'statut' | 'accent_theme' | 'image_url'>;
+}
+
+export interface ShareLink {
+  id: string;
+  token: string;
+  project_id: string | null;
+  libelle: string;
+  cree_le: string;
+  expire_le: string | null;
+  revoque_le: string | null;
+  vues: number;
 }
 
 export type JournalType = 'note' | 'jalon' | 'statut' | 'promesse';

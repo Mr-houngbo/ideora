@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, boolean, timestamp, jsonb, date, index } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, boolean, timestamp, jsonb, date, index, integer, uniqueIndex } from "drizzle-orm/pg-core";
 import type { WorkspaceStore } from "@/types/workspace";
 
 export const projects = pgTable("projects", {
@@ -24,6 +24,7 @@ export const projects = pgTable("projects", {
   prochaineEtapeDate: date("prochaine_etape_date"), // optional target day, YYYY-MM-DD
   aLaUne: boolean("a_la_une").notNull().default(false), // picked by hand for the home page "À la une"
   misAJourLe: timestamp("mis_a_jour_le", { withTimezone: true }).notNull().defaultNow(),
+  dansPortfolio: boolean("dans_portfolio").notNull().default(false), // shown in the shared portfolio
 });
 
 /**
@@ -51,3 +52,39 @@ export const journal = pgTable(
 export type ProjectRow = typeof projects.$inferSelect;
 export type NewProjectRow = typeof projects.$inferInsert;
 export type JournalRow = typeof journal.$inferSelect;
+
+/** A typed link between two ideas ("Daho est une variante de …"). */
+export const liens = pgTable(
+  "liens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    cibleId: uuid("cible_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    type: text("type").notNull(), // inspire | variante | prolonge | lie
+    note: text("note"),
+    creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("liens_pair_idx").on(t.sourceId, t.cibleId)],
+);
+
+/**
+ * Private share links: a secret token opens a read-only page, without login,
+ * of one project (projectId) or of the portfolio (projectId null).
+ */
+export const partages = pgTable("partages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  token: text("token").notNull().unique(),
+  projectId: uuid("project_id").references(() => projects.id, { onDelete: "cascade" }),
+  libelle: text("libelle"),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
+  expireLe: timestamp("expire_le", { withTimezone: true }),
+  revoqueLe: timestamp("revoque_le", { withTimezone: true }),
+  vues: integer("vues").notNull().default(0),
+});
+
+export type LienRow = typeof liens.$inferSelect;
+export type PartageRow = typeof partages.$inferSelect;
