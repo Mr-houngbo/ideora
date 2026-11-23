@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, Briefcase, GraduationCap, LogOut } from "lucide-react";
+import { Sparkles, Briefcase, GraduationCap, History, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { logout } from "@/actions/auth";
@@ -15,6 +15,7 @@ const Header = () => {
   const navLinks = [
     { path: "/", label: "Entreprise", icon: Briefcase, color: "primary" },
     { path: "/education", label: "Académique", icon: GraduationCap, color: "academic" },
+    { path: "/chronologie", label: "Chronologie", icon: History, color: "primary" },
   ];
 
   return (

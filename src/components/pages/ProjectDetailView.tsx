@@ -46,6 +46,7 @@ import ResourceList from "@/components/projects/ResourceList";
 import { SHOWCASE_TEMPLATES } from "@/components/showcase";
 import Journal from "@/components/projects/Journal";
 import NextStep from "@/components/projects/NextStep";
+import ExportPdfButton from "@/components/projects/ExportPdfButton";
 
 interface ProjectDetailViewProps {
   project: Project;
@@ -91,7 +92,7 @@ function DeleteButton({ onConfirm, className }: { onConfirm: () => void; classNa
 function ShowcaseBar({ project, onDelete }: { project: Project; onDelete: () => void }) {
   const router = useRouter();
   return (
-    <div className="sticky top-0 z-50 border-b border-white/10 bg-neutral-950/90 text-white backdrop-blur-xl">
+    <div data-print="hide" className="sticky top-0 z-50 border-b border-white/10 bg-neutral-950/90 text-white backdrop-blur-xl">
       <div className="container flex h-12 items-center justify-between gap-3">
         <button
           onClick={() => router.back()}
@@ -102,6 +103,7 @@ function ShowcaseBar({ project, onDelete }: { project: Project; onDelete: () => 
         </button>
         <IdeaDate iso={project.date_creation} className="truncate text-xs text-white/70" />
         <div className="flex items-center gap-1.5">
+          <ExportPdfButton variant="ghost" className="text-white/80 hover:bg-white/10 hover:text-white" />
           <Link href={`/edit/${project.id}`}>
             <Button variant="ghost" size="icon-sm" className="text-white/80 hover:bg-white/10 hover:text-white" title="Modifier">
               <Edit2 className="h-4 w-4" />
@@ -122,6 +124,7 @@ function FullDossier({ project }: { project: Project }) {
     <section className="border-t border-border bg-background">
       <div className="container max-w-4xl py-12">
         <button
+          data-print="hide"
           onClick={() => setOpen((v) => !v)}
           className="mx-auto flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold shadow-sm transition hover:shadow-md"
           aria-expanded={open}
@@ -187,12 +190,13 @@ const ProjectDetailView = ({ project, journal = [] }: ProjectDetailViewProps) =>
         <ProjectCover project={project} eager className="absolute inset-0 -z-10 h-full w-full" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
 
-        <div className="container flex items-center justify-between pt-5">
+        <div data-print="hide" className="container flex items-center justify-between pt-5">
           <Button variant="glass" size="sm" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour
           </Button>
           <div className="flex gap-2">
+            <ExportPdfButton />
             <Link href={`/edit/${project.id}`}>
               <Button variant="glass" size="icon-sm" title="Modifier">
                 <Edit2 className="w-4 h-4" />
@@ -262,7 +266,7 @@ const ProjectDetailView = ({ project, journal = [] }: ProjectDetailViewProps) =>
             )}
 
             {!hasBody && (
-              <section className="rounded-3xl border border-dashed border-border p-10 text-center">
+              <section data-print="hide" className="rounded-3xl border border-dashed border-border p-10 text-center">
                 <Sparkles className="mx-auto mb-4 h-8 w-8" style={{ color: accent }} />
                 <h2 className="text-xl font-bold">Cette idée tient encore en une ligne</h2>
                 <p className="mx-auto mt-2 max-w-md text-muted-foreground">
@@ -283,7 +287,7 @@ const ProjectDetailView = ({ project, journal = [] }: ProjectDetailViewProps) =>
             </section>
           </article>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="lg:sticky lg:top-24 lg:self-start print:static print:order-first">
             <div className="space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm">
               <NextStep step={project.prochaine_etape} day={project.prochaine_etape_date} />
               <dl className="space-y-4 text-sm">

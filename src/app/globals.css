@@ -354,3 +354,25 @@
     text-wrap: balance;
   }
 }
+
+/* Exporting a project page to PDF (browser print): keep the colours of
+   covers and badges, drop the app's chrome and anything interactive. */
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+  body {
+    background-image: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  header.sticky,
+  .orb,
+  [data-print="hide"] {
+    display: none !important;
+  }
+  li,
+  blockquote {
+    break-inside: avoid;
+  }
+}

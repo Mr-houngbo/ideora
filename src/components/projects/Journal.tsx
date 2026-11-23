@@ -65,7 +65,7 @@ function Composer({ projectId, onAdded }: { projectId: string; onAdded: (e: Jour
   };
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-3xl border border-border bg-card p-4 shadow-sm sm:p-5">
+    <form onSubmit={submit} data-print="hide" className="space-y-3 rounded-3xl border border-border bg-card p-4 shadow-sm sm:p-5">
       <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Type d’entrée">
         {(Object.keys(COMPOSER) as ComposerType[]).map((key) => {
           const Icon = COMPOSER[key].icon;
