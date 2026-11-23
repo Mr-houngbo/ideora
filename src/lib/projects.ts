@@ -22,6 +22,7 @@ export async function getAllProjects(): Promise<Project[]> {
       // image itself from /api/images/[id], which the browser caches.
       imageVersion: sql<string | null>`left(md5(${projects.imageData}), 10)`,
       estEspaceTravail: projects.estEspaceTravail,
+      accentTheme: projects.accentTheme,
     })
     .from(projects)
     .orderBy(desc(projects.dateCreation));

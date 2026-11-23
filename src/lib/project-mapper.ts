@@ -50,6 +50,7 @@ export interface ProjectSummaryRow {
   dateCreation: Date;
   imageVersion: string | null; // computed in SQL so the image bytes never leave the database
   estEspaceTravail: boolean;
+  accentTheme: string | null; // tiny; colours the generated cover of projects without an image
 }
 
 /**
@@ -73,7 +74,7 @@ export function toProjectSummary(row: ProjectSummaryRow): Project {
     date_creation: row.dateCreation.toISOString(),
     image_url: buildImageUrl(row.id, row.imageVersion),
     contenu_riche: "",
-    accent_theme: null,
+    accent_theme: row.accentTheme ?? null,
     est_espace_travail: row.estEspaceTravail,
     workspace_data: null,
     custom_template: null,
