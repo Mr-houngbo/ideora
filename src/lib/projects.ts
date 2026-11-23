@@ -1,5 +1,5 @@
 import "server-only";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { toProject, toProjectSummary } from "@/lib/project-mapper";
@@ -18,8 +18,9 @@ export async function getAllProjects(): Promise<Project[]> {
       horizonTemps: projects.horizonTemps,
       tags: projects.tags,
       dateCreation: projects.dateCreation,
-      imageData: projects.imageData,
-      imageMimeType: projects.imageMimeType,
+      // Only a fingerprint of the image, not the bytes: the cards load the
+      // image itself from /api/images/[id], which the browser caches.
+      imageVersion: sql<string | null>`left(md5(${projects.imageData}), 10)`,
       estEspaceTravail: projects.estEspaceTravail,
     })
     .from(projects)
@@ -31,4 +32,13 @@ export async function getAllProjects(): Promise<Project[]> {
 export async function getProjectById(id: string): Promise<Project | null> {
   const [row] = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
   return row ? toProject(row) : null;
+}
+
+export async function getProjectImage(id: string) {
+  const [row] = await db
+    .select({ imageData: projects.imageData, imageMimeType: projects.imageMimeType })
+    .from(projects)
+    .where(eq(projects.id, id))
+    .limit(1);
+  return row?.imageData ? { data: row.imageData, mimeType: row.imageMimeType } : null;
 }

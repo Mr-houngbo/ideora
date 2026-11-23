@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toProject, toProjectSummary } from "@/lib/project-mapper";
+import { imageVersionOf, toProject, toProjectSummary } from "@/lib/project-mapper";
 import type { ProjectRow } from "@/db/schema";
 
 function makeRow(overrides: Partial<ProjectRow> = {}): ProjectRow {
@@ -42,7 +42,7 @@ describe("toProject", () => {
       motivation: "Parce que",
       ressources: "https://example.com",
       date_creation: "2025-06-15T10:00:00.000Z",
-      image_url: "data:image/jpeg;base64,base64abc",
+      image_url: `/api/images/11111111-1111-1111-1111-111111111111?v=${imageVersionOf("base64abc")}`,
       contenu_riche: "",
       accent_theme: null,
       est_espace_travail: false,
@@ -89,12 +89,11 @@ describe("toProjectSummary", () => {
       horizonTemps: "moyen_terme",
       tags: ["ia"],
       dateCreation: new Date("2025-06-15T10:00:00.000Z"),
-      imageData: "base64abc",
-      imageMimeType: "image/jpeg",
+      imageVersion: "abc123",
       estEspaceTravail: false,
     });
 
-    expect(project.image_url).toBe("data:image/jpeg;base64,base64abc");
+    expect(project.image_url).toBe("/api/images/1?v=abc123");
     expect(project.contenu_riche).toBe("");
     expect(project.accent_theme).toBeNull();
     expect(project.workspace_data).toBeNull();

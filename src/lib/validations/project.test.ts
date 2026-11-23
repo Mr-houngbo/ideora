@@ -46,7 +46,7 @@ describe("projectFormSchema", () => {
   });
 
   it("defaults tags to an empty array when omitted", () => {
-    const { tags, ...rest } = makeInput();
+    const { tags: _tags, ...rest } = makeInput();
     const result = projectFormSchema.parse(rest);
     expect(result.tags).toEqual([]);
   });

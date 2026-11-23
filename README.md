@@ -7,7 +7,7 @@ Tracker personnel d'ambitions et de projets — business et académique — depu
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
 - [Neon](https://neon.tech) (PostgreSQL) + [Drizzle ORM](https://orm.drizzle.team)
 - Session serveur signée (JWT via `jose`) + mot de passe hashé (`bcryptjs`), toutes les routes protégées via `proxy.ts`
-- Images stockées en base64 directement dans Neon (aucun service de stockage tiers), embarquées dans la même requête que le projet
+- Images stockées en base64 directement dans Neon (aucun service de stockage tiers), servies par la route protégée `/api/images/[id]` avec cache navigateur (l'URL change quand l'image change)
 - Chaque projet peut avoir un contenu riche en Markdown (`contenu_riche`) et, optionnellement, un espace de travail dédié (`/projet/[id]/workspace`) pour les idées qui demandent plus de profondeur qu'une simple fiche
 - shadcn/ui, Tailwind CSS, Framer Motion, Zustand (filtres UI uniquement)
 - [Vitest](https://vitest.dev) pour les tests

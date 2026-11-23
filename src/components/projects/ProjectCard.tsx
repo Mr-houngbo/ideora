@@ -37,9 +37,13 @@ const ProjectCard = ({ project, index = 0 }: ProjectCardProps) => {
           <div className="relative h-52 overflow-hidden">
             {project.image_url ? (
               <>
+                {/* Plain <img>: images come from the login-protected /api/images route which next/image's server-side optimizer cannot fetch without the session cookie. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={project.image_url}
                   alt={project.titre}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />

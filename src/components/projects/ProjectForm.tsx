@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Image as ImageIcon, Loader2, Save, ArrowLeft, Briefcase, GraduationCap, Sparkles, Check } from "lucide-react";
@@ -72,13 +72,15 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(initialData?.image_url || null);
 
-  useEffect(() => {
-    const newCategories = projectType === "academique" ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
-    if (!newCategories.includes(formData.categorie)) {
-      handleChange("categorie", newCategories[0]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectType]);
+  // Switching type keeps the category valid for the new type: done in the
+  // click handler rather than an effect so it happens in the same render.
+  const selectProjectType = (type: ProjectType) => {
+    setProjectType(type);
+    const newCategories = type === "academique" ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
+    setFormData((prev) =>
+      newCategories.includes(prev.categorie) ? prev : { ...prev, categorie: newCategories[0] },
+    );
+  };
 
   const currentCategories = projectType === "academique" ? CATEGORIES_EDUCATION : CATEGORIES_ENTREPRISE;
 
@@ -140,7 +142,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
 
     try {
       await onSubmit(formData, imageFile || undefined);
-    } catch (error) {
+    } catch {
       toast.error("Erreur", {
         description: "Une erreur est survenue lors de l'enregistrement.",
       });
@@ -162,7 +164,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
           <div className="type-selector">
             <motion.button
               type="button"
-              onClick={() => setProjectType("entreprise")}
+              onClick={() => selectProjectType("entreprise")}
               className={cn("type-option", projectType === "entreprise" && "selected")}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -194,7 +196,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
 
             <motion.button
               type="button"
-              onClick={() => setProjectType("academique")}
+              onClick={() => selectProjectType("academique")}
               className={cn("type-option", projectType === "academique" && "selected academic")}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -238,6 +240,8 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
           >
             {imagePreview ? (
               <div className="relative aspect-video">
+                {/* Plain <img>: the preview is a local blob: URL or the login-protected /api/images route, neither of which next/image can optimize. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imagePreview} alt="Aperçu" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent" />
                 <Button
@@ -263,7 +267,7 @@ const ProjectForm = ({ initialData, onSubmit, isLoading, defaultCategory }: Proj
                   <ImageIcon className="w-8 h-8 text-primary-foreground" />
                 </motion.div>
                 <p className="text-sm font-semibold text-foreground mb-1">Cliquez pour ajouter une image</p>
-                <p className="text-xs text-muted-foreground">PNG, JPG jusqu'à 5 Mo</p>
+                <p className="text-xs text-muted-foreground">PNG, JPG jusqu’à 5 Mo</p>
               </div>
             )}
           </div>

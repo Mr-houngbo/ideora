@@ -24,6 +24,9 @@ function useCountdownTo(targetIso: string) {
     const target = new Date(targetIso).getTime();
     const diffMs = Math.max(0, target - Date.now());
     const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    // Computed after mount on purpose: "now" differs between server and
+    // client, so doing it during render would cause a hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRemaining({
       years: Math.floor(totalDays / 365),
       months: Math.floor((totalDays % 365) / 30),
@@ -90,6 +93,9 @@ export default function HouefaShowcase({ project }: ShowcaseComponentProps) {
     <div className={`${styles.showcase} ${spaceGrotesk.variable} ${ibmPlexSans.variable}`}>
       <section className={styles.hero}>
         {project.image_url ? (
+          // Plain <img>: images come from the login-protected /api/images route, which
+          // next/image's server-side optimizer cannot fetch without the session cookie.
+          // eslint-disable-next-line @next/next/no-img-element
           <img src={project.image_url} alt="Houefa" className={styles.heroImage} />
         ) : (
           <div className={styles.heroFallback} />
