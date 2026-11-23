@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils";
 import RichMarkdown from "@/components/projects/RichMarkdown";
 import ProjectCover from "@/components/projects/ProjectCover";
 import ResourceList from "@/components/projects/ResourceList";
-import { SHOWCASE_TEMPLATES } from "@/components/showcase";
+import { SHOWCASE_TEMPLATES, SITE_NATIVE_TEMPLATES } from "@/components/showcase";
 import Journal from "@/components/projects/Journal";
 import NextStep from "@/components/projects/NextStep";
 import ExportPdfButton from "@/components/projects/ExportPdfButton";
@@ -172,16 +172,37 @@ const ProjectDetailView = ({ project, journal = [], links = [], linkOptions = []
   };
 
   if (CustomShowcase) {
+    const native = SITE_NATIVE_TEMPLATES.has(project.custom_template ?? "");
+    const Frame = native ? Layout : Fragment;
     return (
-      <>
-        <ShowcaseBar project={project} onDelete={handleDelete} />
+      <Frame>
+        {native ? (
+          <div data-print="hide" className="container flex max-w-6xl items-center justify-between gap-3 pt-5">
+            <Button variant="glass" size="sm" onClick={() => router.back()}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Retour
+            </Button>
+            <IdeaDate iso={project.date_creation} className="hidden truncate text-xs text-muted-foreground sm:block" />
+            <div className="flex gap-2">
+              <ExportPdfButton />
+              <Link href={`/edit/${project.id}`}>
+                <Button variant="glass" size="icon-sm" title="Modifier">
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+              </Link>
+              <DeleteButton onConfirm={handleDelete} />
+            </div>
+          </div>
+        ) : (
+          <ShowcaseBar project={project} onDelete={handleDelete} />
+        )}
         <CustomShowcase project={project} />
         {project.contenu_riche && <FullDossier project={project} />}
         <section id="evolution" className="scroll-mt-16 border-t border-border bg-background">
           <div className="container max-w-3xl py-12">
             <SectionTitle>Évolution</SectionTitle>
             <NextStep step={project.prochaine_etape} day={project.prochaine_etape_date} className="mb-6" />
-            <div data-print="hide" className="mb-8 grid gap-6 rounded-3xl border border-border bg-card p-5 sm:grid-cols-[1fr_200px]">
+            <div data-print="hide" className="mb-8 grid grid-cols-1 gap-6 rounded-3xl border border-border bg-card p-5 sm:grid-cols-[1fr_200px]">
               <ProjectLinks projectId={project.id} links={links} options={linkOptions} />
               <div className="self-start">
                 <ShareDialog projectId={project.id} shares={shares} />
@@ -190,7 +211,7 @@ const ProjectDetailView = ({ project, journal = [], links = [], linkOptions = []
             <Journal projectId={project.id} entries={journal} bornAt={project.date_creation} />
           </div>
         </section>
-      </>
+      </Frame>
     );
   }
 
@@ -242,7 +263,7 @@ const ProjectDetailView = ({ project, journal = [], links = [], linkOptions = []
       </header>
 
       <div className="container max-w-6xl py-12 md:py-16">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_300px]">
           <article className="min-w-0 space-y-14">
             {project.motivation && (
               <section>
