@@ -39,7 +39,7 @@ export function JournalView({ store, onChange }: { store: Store; onChange: (v: J
     <>
       <PageHeader title="Journal stratégique" subtitle="Tes réflexions, doutes, décisions. À relire dans 5 ans."
         action={
-          <Button onClick={() => { setEditing(null); setOpen(true); }} style={{ background: "var(--mpp-primary)" }}>
+          <Button onClick={() => { setEditing(null); setOpen(true); }} variant="gradient">
             <Plus className="h-4 w-4 mr-1" /> Nouvelle entrée
           </Button>
         }
@@ -134,7 +134,7 @@ function JournalDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
-          <Button onClick={() => onSave(e)} style={{ background: "var(--mpp-primary)" }}>Enregistrer</Button>
+          <Button onClick={() => onSave(e)} variant="gradient">Enregistrer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

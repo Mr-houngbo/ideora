@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Lightbulb, Search, Plus, Trash2, Edit3, X, Pin, PinOff, Save } from "lucide-react";
+import { Lightbulb, Search, Plus, Trash2, Edit3, X, Pin, PinOff, Save, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,9 +17,9 @@ import { uid, costLabel, statusLabel, PageHeader, EmptyState } from "./shared";
 
 /* ───────────────────────── Initiatives ───────────────────────── */
 export function InitiativesView({
-  store, onChange,
-}: { store: Store; onChange: (v: Initiative[]) => void }) {
-  const [open, setOpen] = useState(false);
+  store, onChange, autoNew = false,
+}: { store: Store; onChange: (v: Initiative[]) => void; autoNew?: boolean }) {
+  const [open, setOpen] = useState(autoNew);
   const [editing, setEditing] = useState<Initiative | null>(null);
   const [filterDomain, setFilterDomain] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -40,7 +40,7 @@ export function InitiativesView({
     onChange(exists
       ? store.initiatives.map((i) => i.id === data.id ? data : i)
       : [data, ...store.initiatives]);
-    toast.success(exists ? "Initiative mise à jour" : "Initiative ajoutée");
+    toast.success(exists ? "Fiche mise à jour" : "Fiche ajoutée", exists ? undefined : { description: "Une de plus dans ta carte du monde." });
     setOpen(false); setEditing(null);
   };
 
@@ -61,9 +61,9 @@ export function InitiativesView({
         action={
           <Button
             onClick={() => { setEditing(null); setOpen(true); }}
-            style={{ background: "var(--mpp-primary)" }}
+            variant="gradient"
           >
-            <Plus className="h-4 w-4 mr-1" /> Nouvelle initiative
+            <Plus className="h-4 w-4 mr-1" /> Nouvelle fiche
           </Button>
         }
       />
@@ -78,7 +78,7 @@ export function InitiativesView({
           />
         </div>
         <Select value={filterDomain} onValueChange={setFilterDomain}>
-          <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[180px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous les domaines</SelectItem>
             {store.domains.map((d) => (
@@ -87,7 +87,7 @@ export function InitiativesView({
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[160px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous statuts</SelectItem>
             {Object.entries(statusLabel).map(([k, v]) => (
@@ -102,12 +102,12 @@ export function InitiativesView({
           icon={Lightbulb}
           title="Aucune initiative"
           hint="Commence par en saisir une — un programme, une réforme, une idée vue ailleurs."
-          action={<Button onClick={() => { setEditing(null); setOpen(true); }} style={{ background: "var(--mpp-primary)" }}>
+          action={<Button onClick={() => { setEditing(null); setOpen(true); }} variant="gradient">
             <Plus className="h-4 w-4 mr-1" /> Ajouter
           </Button>}
         />
       ) : (
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((i) => {
             const domain = store.domains.find((d) => d.id === i.domainId);
             return (
@@ -210,144 +210,157 @@ function InitiativeDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="mpp-sub text-2xl">
-            {initial ? "Modifier l'initiative" : "Nouvelle initiative"}
+          <DialogTitle className="text-2xl font-extrabold tracking-tight">
+            {initial ? "Modifier la fiche" : <>Nouvelle fiche <span className="gradient-text">MonPays+</span></>}
           </DialogTitle>
           <DialogDescription>
-            Documente précisément. Le détail aujourd’hui = la crédibilité demain.
+            Trois questions suffisent. Le reste peut attendre, tu le compléteras plus tard.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-2">
-          <div>
-            <Label>Titre *</Label>
-            <Input value={data.title} onChange={(e) => set("title", e.target.value)}
-              placeholder="ex: Méthode finlandaise d'évaluation des enseignants" />
-          </div>
-          <div className="grid md:grid-cols-3 gap-3">
-            <div>
-              <Label>Domaine</Label>
-              <Select value={data.domainId} onValueChange={(v) => set("domainId", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {domains.map((d) => (
-                    <SelectItem key={d.id} value={d.id}>{d.icon} {d.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <div className="grid gap-6 py-2">
+          <FormStep n={1} title="Ce que tu as vu" hint="Un programme, une réforme, une entreprise, une habitude.">
+            <Input value={data.title} onChange={(e) => set("title", e.target.value)} autoFocus
+              aria-label="Titre" className="h-12 text-base font-semibold"
+              placeholder="ex : Méthode finlandaise d'évaluation des enseignants" />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_90px]">
+              <div>
+                <Label className="mb-1.5 block text-xs text-muted-foreground">Domaine</Label>
+                <Select value={data.domainId} onValueChange={(v) => set("domainId", v)}>
+                  <SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
+                  <SelectContent>
+                    {domains.map((d) => (
+                      <SelectItem key={d.id} value={d.id}>{d.icon} {d.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="mb-1.5 block text-xs text-muted-foreground">Pays d’origine</Label>
+                <Input value={data.country} onChange={(e) => set("country", e.target.value)} placeholder="ex : Finlande" />
+              </div>
+              <div>
+                <Label className="mb-1.5 block text-xs text-muted-foreground">Code</Label>
+                <Input value={data.countryCode} onChange={(e) => set("countryCode", e.target.value.toUpperCase().slice(0,2))}
+                  placeholder="FI" className="uppercase" />
+              </div>
             </div>
-            <div>
-              <Label>Pays d’origine</Label>
-              <Input value={data.country} onChange={(e) => set("country", e.target.value)}
-                placeholder="ex: Finlande" />
-            </div>
-            <div>
-              <Label>Code ISO</Label>
-              <Input value={data.countryCode} onChange={(e) => set("countryCode", e.target.value.toUpperCase().slice(0,2))}
-                placeholder="FI" className="mpp-mono uppercase" />
-            </div>
-          </div>
+          </FormStep>
 
-          <div>
-            <Label>Description / résumé</Label>
-            <Textarea rows={3} value={data.description} onChange={(e) => set("description", e.target.value)} />
-          </div>
+          <FormStep n={2} title="En deux phrases" hint="Qu'est-ce que c'est, et qu'est-ce que ça change ?">
+            <Textarea rows={3} value={data.description} onChange={(e) => set("description", e.target.value)}
+              placeholder="Raconte-le comme à un ami." />
+          </FormStep>
 
-          <div className="grid md:grid-cols-2 gap-3">
-            <div>
-              <Label>Mécanisme clé du succès</Label>
-              <Textarea rows={3} value={data.mechanism} onChange={(e) => set("mechanism", e.target.value)}
-                placeholder="Qu'est-ce qui fait que ça marche ?" />
-            </div>
-            <div>
-              <Label>Conditions de réussite</Label>
-              <Textarea rows={3} value={data.conditions} onChange={(e) => set("conditions", e.target.value)}
-                placeholder="Contexte, prérequis…" />
-            </div>
-          </div>
-
-          <div>
-            <Label>Obstacles rencontrés</Label>
-            <Textarea rows={2} value={data.obstacles} onChange={(e) => set("obstacles", e.target.value)} />
-          </div>
-
-          <div>
-            <Label>Notes d’adaptation au Bénin</Label>
+          <FormStep n={3} title="Et chez nous ?" hint="Ce qu'il faudrait changer pour que ça marche au Bénin.">
             <Textarea rows={3} value={data.adaptation} onChange={(e) => set("adaptation", e.target.value)}
-              placeholder="Qu'est-ce qu'il faut changer pour notre contexte ?" />
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-3">
+              placeholder="Acteurs, coûts, freins, premier pas possible…" />
             <div>
-              <Label>Faisabilité ({data.feasibility}/10)</Label>
+              <div className="mb-1.5 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Faisabilité au Bénin</span>
+                <span className="font-bold tabular-nums text-primary">{data.feasibility}/10</span>
+              </div>
               <input type="range" min={1} max={10} value={data.feasibility}
                 onChange={(e) => set("feasibility", Number(e.target.value))}
-                className="w-full accent-[var(--mpp-primary)]" />
+                aria-label="Faisabilité au Bénin"
+                className="w-full accent-[hsl(var(--primary))]" />
             </div>
-            <div>
-              <Label>Coût estimé</Label>
-              <Select value={data.cost} onValueChange={(v) => set("cost", v as Initiative["cost"])}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {Object.entries(costLabel).map(([k, v]) => (
-                    <SelectItem key={k} value={k}>{v}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Durée (années)</Label>
-              <Input type="number" min={1} max={20}
-                value={data.timelineYears}
-                onChange={(e) => set("timelineYears", Number(e.target.value))} />
-            </div>
-            <div>
-              <Label>Statut</Label>
-              <Select value={data.status} onValueChange={(v) => set("status", v as Initiative["status"])}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {Object.entries(statusLabel).map(([k, v]) => (
-                    <SelectItem key={k} value={k}>{v}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          </FormStep>
 
-          <div>
-            <Label className="flex items-center justify-between">
-              <span>Sources</span>
-              <button
-                type="button"
-                onClick={() => set("sources", [...data.sources, { url: "", title: "" }])}
-                className="text-xs underline" style={{ color: "var(--mpp-primary)" }}
-              >+ ajouter une source</button>
-            </Label>
-            <div className="space-y-2 mt-1">
-              {data.sources.map((s, idx) => (
-                <div key={idx} className="flex gap-2">
-                  <Input value={s.title} onChange={(e) => {
-                    const arr = [...data.sources]; arr[idx] = { ...s, title: e.target.value };
-                    set("sources", arr);
-                  }} placeholder="Titre" className="flex-1" />
-                  <Input value={s.url} onChange={(e) => {
-                    const arr = [...data.sources]; arr[idx] = { ...s, url: e.target.value };
-                    set("sources", arr);
-                  }} placeholder="https://…" className="flex-1" />
-                  <Button variant="ghost" size="icon" onClick={() =>
-                    set("sources", data.sources.filter((_, i) => i !== idx))
-                  }><X className="h-4 w-4" /></Button>
+          <details className="group rounded-2xl border border-border/70 bg-secondary/40 open:bg-transparent" open={Boolean(initial)}>
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+              <span>
+                Aller plus loin
+                <span className="ml-2 font-normal text-muted-foreground">mécanisme, obstacles, coût, sources… (facultatif)</span>
+              </span>
+              <ChevronDown className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="grid gap-4 px-4 pb-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div>
+                  <Label>Mécanisme clé du succès</Label>
+                  <Textarea rows={3} value={data.mechanism} onChange={(e) => set("mechanism", e.target.value)}
+                    placeholder="Qu'est-ce qui fait que ça marche ?" />
                 </div>
-              ))}
-            </div>
-          </div>
+                <div>
+                  <Label>Conditions de réussite</Label>
+                  <Textarea rows={3} value={data.conditions} onChange={(e) => set("conditions", e.target.value)}
+                    placeholder="Contexte, prérequis…" />
+                </div>
+              </div>
 
-          <div>
-            <Label>Tags (séparés par virgule)</Label>
-            <Input value={data.tags.join(", ")}
-              onChange={(e) => set("tags", e.target.value.split(",").map((t) => t.trim()).filter(Boolean))}
-              placeholder="réforme, public, scalable" />
-          </div>
+              <div>
+                <Label>Obstacles rencontrés</Label>
+                <Textarea rows={2} value={data.obstacles} onChange={(e) => set("obstacles", e.target.value)} />
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div>
+                  <Label>Coût estimé</Label>
+                  <Select value={data.cost} onValueChange={(v) => set("cost", v as Initiative["cost"])}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(costLabel).map(([k, v]) => (
+                        <SelectItem key={k} value={k}>{v}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Durée (années)</Label>
+                  <Input type="number" min={1} max={20}
+                    value={data.timelineYears}
+                    onChange={(e) => set("timelineYears", Number(e.target.value))} />
+                </div>
+                <div>
+                  <Label>Statut</Label>
+                  <Select value={data.status} onValueChange={(v) => set("status", v as Initiative["status"])}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(statusLabel).map(([k, v]) => (
+                        <SelectItem key={k} value={k}>{v}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <Label className="flex items-center justify-between">
+                  <span>Sources</span>
+                  <button
+                    type="button"
+                    onClick={() => set("sources", [...data.sources, { url: "", title: "" }])}
+                    className="text-xs font-semibold text-primary hover:underline"
+                  >+ ajouter une source</button>
+                </Label>
+                <div className="mt-1 space-y-2">
+                  {data.sources.map((s, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <Input value={s.title} onChange={(e) => {
+                        const arr = [...data.sources]; arr[idx] = { ...s, title: e.target.value };
+                        set("sources", arr);
+                      }} placeholder="Titre" className="flex-1" />
+                      <Input value={s.url} onChange={(e) => {
+                        const arr = [...data.sources]; arr[idx] = { ...s, url: e.target.value };
+                        set("sources", arr);
+                      }} placeholder="https://…" className="flex-1" />
+                      <Button variant="ghost" size="icon" onClick={() =>
+                        set("sources", data.sources.filter((_, i) => i !== idx))
+                      }><X className="h-4 w-4" /></Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label>Tags (séparés par virgule)</Label>
+                <Input value={data.tags.join(", ")}
+                  onChange={(e) => set("tags", e.target.value.split(",").map((t) => t.trim()).filter(Boolean))}
+                  placeholder="réforme, public, scalable" />
+              </div>
+            </div>
+          </details>
         </div>
 
         <DialogFooter>
@@ -357,12 +370,32 @@ function InitiativeDialog({
               if (!data.title.trim()) { toast.error("Le titre est requis"); return; }
               onSave(data);
             }}
-            style={{ background: "var(--mpp-primary)" }}
+            variant="gradient"
           >
-            <Save className="h-4 w-4 mr-1" /> Enregistrer
+            <Save className="h-4 w-4 mr-1" /> Enregistrer la fiche
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function FormStep({ n, title, hint, children }: { n: number; title: string; hint: string; children: React.ReactNode }) {
+  return (
+    <section className="flex gap-4">
+      <span
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-white shadow-md"
+        style={{ backgroundImage: "var(--gradient-primary)" }}
+      >
+        {n}
+      </span>
+      <div className="min-w-0 flex-1 space-y-3">
+        <div>
+          <h3 className="font-bold leading-tight">{title}</h3>
+          <p className="text-xs text-muted-foreground">{hint}</p>
+        </div>
+        {children}
+      </div>
+    </section>
   );
 }

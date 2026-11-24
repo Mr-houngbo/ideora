@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { LIGHT_ONLY_PATH, THEME_SCRIPT } from "./theme";
+import { THEME_SCRIPT, THEME_STORAGE_KEY } from "./theme";
 
 describe("theme", () => {
-  it("keeps only workspace pages in light mode", () => {
-    expect(LIGHT_ONLY_PATH.test("/projet/68f5bad1/workspace")).toBe(true);
-    expect(LIGHT_ONLY_PATH.test("/projet/68f5bad1")).toBe(false);
-    expect(LIGHT_ONLY_PATH.test("/")).toBe(false);
+  it("reads the saved theme before the first paint", () => {
+    expect(THEME_SCRIPT).toContain(THEME_STORAGE_KEY);
+    expect(THEME_SCRIPT).toContain("prefers-color-scheme: dark");
   });
-  it("embeds the light-only rule in the head script", () => {
-    expect(THEME_SCRIPT).toContain(String(LIGHT_ONLY_PATH));
+  it("no longer forces any page into light mode", () => {
+    expect(THEME_SCRIPT).not.toContain("workspace");
   });
 });

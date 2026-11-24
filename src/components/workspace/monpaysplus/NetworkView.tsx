@@ -35,7 +35,7 @@ export function NetworkView({
     <>
       <PageHeader title="Réseau" subtitle="Les personnes qui peuvent porter, financer ou amplifier."
         action={
-          <Button onClick={() => { setEditing(null); setOpen(true); }} style={{ background: "var(--mpp-primary)" }}>
+          <Button onClick={() => { setEditing(null); setOpen(true); }} variant="gradient">
             <Plus className="h-4 w-4 mr-1" /> Ajouter un contact
           </Button>
         }
@@ -159,7 +159,7 @@ function ContactDialog({
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
           <Button onClick={() => { if (!c.name.trim()) return toast.error("Nom requis"); onSave(c); }}
-            style={{ background: "var(--mpp-primary)" }}>Enregistrer</Button>
+            variant="gradient">Enregistrer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
