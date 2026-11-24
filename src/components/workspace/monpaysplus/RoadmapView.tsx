@@ -65,7 +65,7 @@ export function RoadmapView({
     <>
       <PageHeader title="Roadmap" subtitle="5 ans. 4 trimestres. Une trajectoire claire."
         action={
-          <Button onClick={() => { setEditing(null); setOpen(true); }} style={{ background: "var(--mpp-primary)" }}>
+          <Button onClick={() => { setEditing(null); setOpen(true); }} variant="gradient">
             <Plus className="h-4 w-4 mr-1" /> Nouveau jalon
           </Button>
         }
@@ -225,7 +225,7 @@ function MilestoneDialog({
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
           <Button onClick={() => { if (!m.title.trim()) return toast.error("Titre requis"); onSave(m); }}
-            style={{ background: "var(--mpp-primary)" }}>Enregistrer</Button>
+            variant="gradient">Enregistrer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

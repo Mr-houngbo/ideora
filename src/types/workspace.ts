@@ -108,13 +108,13 @@ export type WorkspaceStore = {
 };
 
 export const seedDomains: Domain[] = [
-  { id: "domain-education", name: "Éducation", slug: "education", icon: "📚", color: "#6B3A2A", description: "Systèmes éducatifs, réformes, pédagogie", priority: 1 },
-  { id: "domain-sante", name: "Santé", slug: "sante", icon: "🩺", color: "#A63228", description: "Santé publique, accès aux soins", priority: 2 },
-  { id: "domain-economie", name: "Économie", slug: "economie", icon: "📈", color: "#D4A853", description: "Modèles économiques, industrialisation", priority: 3 },
-  { id: "domain-agriculture", name: "Agriculture", slug: "agriculture", icon: "🌾", color: "#4A7C59", description: "Souveraineté alimentaire, agroécologie", priority: 4 },
-  { id: "domain-gouvernance", name: "Gouvernance", slug: "gouvernance", icon: "⚖️", color: "#3E1F13", description: "Institutions, transparence, justice", priority: 5 },
-  { id: "domain-infrastructure", name: "Infrastructure", slug: "infrastructure", icon: "🏗️", color: "#9C5A3C", description: "Transports, énergie, numérique", priority: 6 },
-  { id: "domain-culture", name: "Culture & Identité", slug: "culture", icon: "🎭", color: "#C4742A", description: "Patrimoine, langues, arts", priority: 7 },
+  { id: "domain-education", name: "Éducation", slug: "education", icon: "📚", color: "#7C3AED", description: "Systèmes éducatifs, réformes, pédagogie", priority: 1 },
+  { id: "domain-sante", name: "Santé", slug: "sante", icon: "🩺", color: "#E11D48", description: "Santé publique, accès aux soins", priority: 2 },
+  { id: "domain-economie", name: "Économie", slug: "economie", icon: "📈", color: "#F59E0B", description: "Modèles économiques, industrialisation", priority: 3 },
+  { id: "domain-agriculture", name: "Agriculture", slug: "agriculture", icon: "🌾", color: "#10B981", description: "Souveraineté alimentaire, agroécologie", priority: 4 },
+  { id: "domain-gouvernance", name: "Gouvernance", slug: "gouvernance", icon: "⚖️", color: "#4F46E5", description: "Institutions, transparence, justice", priority: 5 },
+  { id: "domain-infrastructure", name: "Infrastructure", slug: "infrastructure", icon: "🏗️", color: "#0EA5E9", description: "Transports, énergie, numérique", priority: 6 },
+  { id: "domain-culture", name: "Culture & Identité", slug: "culture", icon: "🎭", color: "#C026D3", description: "Patrimoine, langues, arts", priority: 7 },
 ];
 
 export const emptyWorkspaceStore: WorkspaceStore = {
@@ -127,3 +127,23 @@ export const emptyWorkspaceStore: WorkspaceStore = {
   journal: [],
   sessions: [],
 };
+
+/** Colours of the first palette (brown and gold), mapped to Ideora's palette. */
+const LEGACY_DOMAIN_COLORS: Record<string, string> = {
+  "#6B3A2A": "#7C3AED",
+  "#A63228": "#E11D48",
+  "#D4A853": "#F59E0B",
+  "#4A7C59": "#10B981",
+  "#3E1F13": "#4F46E5",
+  "#9C5A3C": "#0EA5E9",
+  "#C4742A": "#C026D3",
+};
+
+/** Brings domains still on the old brown palette to the current one; other colours are kept. */
+export function refreshDomainColors(store: WorkspaceStore): WorkspaceStore {
+  if (!store.domains.some((d) => LEGACY_DOMAIN_COLORS[d.color.toUpperCase()])) return store;
+  return {
+    ...store,
+    domains: store.domains.map((d) => ({ ...d, color: LEGACY_DOMAIN_COLORS[d.color.toUpperCase()] ?? d.color })),
+  };
+}

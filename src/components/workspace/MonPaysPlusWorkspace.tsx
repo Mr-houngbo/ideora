@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { updateProjectWorkspace } from "@/actions/workspace";
-import { holdLightTheme } from "@/lib/theme";
-import type { WorkspaceStore as Store } from "@/types/workspace";
+import Layout from "@/components/layout/Layout";
+import { refreshDomainColors, type WorkspaceStore as Store } from "@/types/workspace";
 import { Style, Sidebar, MobileNav } from "./monpaysplus/shared";
 import type { Tab } from "./monpaysplus/shared";
 import { DashboardView } from "./monpaysplus/DashboardView";
@@ -25,8 +25,14 @@ interface MonPaysPlusWorkspaceProps {
 }
 
 export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPaysPlusWorkspaceProps) {
-  const [store, setStore] = useState<Store>(initialStore);
+  const [store, setStore] = useState<Store>(() => refreshDomainColors(initialStore));
   const [tab, setTab] = useState<Tab>("dashboard");
+  // Bumped to open the "new initiative" form straight away (from the weekly ritual).
+  const [newInitiative, setNewInitiative] = useState(0);
+  const writeThisWeek = () => {
+    setTab("initiatives");
+    setNewInitiative((n) => n + 1);
+  };
   const isFirstRender = useRef(true);
 
   // Skip the very first run — `store` at that point is exactly what the
@@ -40,8 +46,6 @@ export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPay
       toast.error("Erreur", { description: "Impossible de sauvegarder l'espace de travail." });
     });
   }, [store, projectId]);
-  // The workspace has its own light palette; keep the app's dark tokens away from its dialogs and inputs.
-  useEffect(() => holdLightTheme(), []);
   useEffect(() => {
     document.title = "MonPays+ — Observer le monde. Construire le Bénin.";
   }, []);
@@ -50,12 +54,14 @@ export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPay
     setStore((s) => ({ ...s, [key]: value }));
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--mpp-surface)" }}>
-      <Style />
-      <MobileNav tab={tab} onChange={setTab} backHref={`/projet/${projectId}`} />
-      <div className="flex">
-        <Sidebar tab={tab} onChange={setTab} store={store} backHref={`/projet/${projectId}`} />
-        <main className="flex-1 min-h-screen p-6 md:p-10 lg:pl-12 overflow-x-hidden">
+    <Layout>
+      <div className="mpp relative">
+        <Style />
+        <div className="container max-w-7xl py-8 md:py-10">
+          <MobileNav tab={tab} onChange={setTab} backHref={`/projet/${projectId}`} />
+          <div className="flex gap-8">
+            <Sidebar tab={tab} onChange={setTab} store={store} backHref={`/projet/${projectId}`} />
+            <main className="min-w-0 flex-1">
           <AnimatePresence mode="wait">
             <motion.div
               key={tab}
@@ -64,9 +70,11 @@ export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPay
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25 }}
             >
-              {tab === "dashboard" && <DashboardView store={store} onJump={setTab} />}
+              {tab === "dashboard" && <DashboardView store={store} onJump={setTab} onWrite={writeThisWeek} />}
               {tab === "initiatives" && (
                 <InitiativesView
+                  key={newInitiative}
+                  autoNew={newInitiative > 0}
                   store={store}
                   onChange={(v) => update("initiatives", v)}
                 />
@@ -96,8 +104,10 @@ export default function MonPaysPlusWorkspace({ projectId, initialStore }: MonPay
               {tab === "search" && <SearchView store={store} onJump={setTab} />}
             </motion.div>
           </AnimatePresence>
-        </main>
+            </main>
+          </div>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }

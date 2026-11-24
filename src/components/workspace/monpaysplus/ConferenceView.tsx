@@ -34,7 +34,7 @@ export function ConferenceView({ store, onChange }: { store: Store; onChange: (v
     <>
       <PageHeader title="Conférence" subtitle="Le rendez-vous final. Programme, intervenants, propositions."
         action={
-          <Button onClick={() => { setEditing(null); setOpen(true); }} style={{ background: "var(--mpp-primary)" }}>
+          <Button onClick={() => { setEditing(null); setOpen(true); }} variant="gradient">
             <Plus className="h-4 w-4 mr-1" /> Nouvelle session
           </Button>
         }
@@ -148,7 +148,7 @@ function SessionDialog({
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
           <Button onClick={() => { if (!s.title.trim()) return toast.error("Titre requis"); onSave(s); }}
-            style={{ background: "var(--mpp-primary)" }}>Enregistrer</Button>
+            variant="gradient">Enregistrer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

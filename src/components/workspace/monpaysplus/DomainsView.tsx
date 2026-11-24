@@ -36,7 +36,7 @@ export function DomainsView({
         subtitle="Les secteurs sur lesquels tu observes et tu construis."
         action={
           <Button onClick={() => { setEditing(null); setOpen(true); }}
-            style={{ background: "var(--mpp-primary)" }}>
+            variant="gradient">
             <Plus className="h-4 w-4 mr-1" /> Nouveau domaine
           </Button>
         }
@@ -92,7 +92,7 @@ export function DomainsView({
 function DomainDialog({
   open, onOpenChange, initial, onSave,
 }: { open: boolean; onOpenChange: (v: boolean) => void; initial: Domain | null; onSave: (d: Domain) => void }) {
-  const blank: Domain = { id: uid(), name: "", slug: "", icon: "✦", color: "#6B3A2A", description: "", priority: 99 };
+  const blank: Domain = { id: uid(), name: "", slug: "", icon: "✦", color: "#7C3AED", description: "", priority: 99 };
   const [d, setD] = useState<Domain>(initial || blank);
   useEffect(() => { setD(initial || { ...blank, id: uid() }); /* eslint-disable-line */ }, [initial, open]);
 
@@ -131,7 +131,7 @@ function DomainDialog({
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
           <Button onClick={() => { if (!d.name.trim()) return toast.error("Nom requis"); onSave(d); }}
-            style={{ background: "var(--mpp-primary)" }}>Enregistrer</Button>
+            variant="gradient">Enregistrer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

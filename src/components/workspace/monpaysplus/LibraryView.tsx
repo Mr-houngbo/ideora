@@ -36,7 +36,7 @@ export function LibraryView({ store, onChange }: { store: Store; onChange: (v: L
     <>
       <PageHeader title="Bibliothèque" subtitle="Tout ce que tu lis, écoutes, regardes — et ce que tu en retiens."
         action={
-          <Button onClick={() => { setEditing(null); setOpen(true); }} style={{ background: "var(--mpp-primary)" }}>
+          <Button onClick={() => { setEditing(null); setOpen(true); }} variant="gradient">
             <Plus className="h-4 w-4 mr-1" /> Nouvelle ressource
           </Button>
         }
@@ -185,7 +185,7 @@ function LibraryDialog({
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
           <Button onClick={() => { if (!x.title.trim()) return toast.error("Titre requis"); onSave(x); }}
-            style={{ background: "var(--mpp-primary)" }}>Enregistrer</Button>
+            variant="gradient">Enregistrer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
